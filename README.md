@@ -34,6 +34,7 @@ Aplicação desktop de produtividade pessoal voltada para estudantes, desenvolvi
 - Contagem de sessões por assunto com botões `[−]` e `[+]` para ajuste manual
 - Estatísticas diárias (sessões e tempo de foco acumulados no dia)
 - Configurações de duração persistidas entre sessões
+- Janela destacável (sempre no topo), com botão "↙ Reintegrar" na própria janela
 
 ### Bloco de Notas Rápido
 - Texto simples persistido por usuário

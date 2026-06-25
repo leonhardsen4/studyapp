@@ -177,7 +177,8 @@ evento (id, usuario_id, titulo, descricao, data TEXT YYYY-MM-DD, hora_inicio TEX
 
 #### Infraestrutura
 - Navegação via botão "🍅 Pomodoro" na topbar com carregamento lazy (mesmo padrão dos demais módulos)
-- `pararRecursos()` para o `Timeline` ao fazer logout/fechar
+- **Janela destacável:** botão "↗ Destacar" na toolbar move toda a view (toolbar + conteúdo) para `Stage` separada sempre no topo; placeholder exibido na tela principal; "↙ Reintegrar" devolve ao painel — padrão idêntico à Calculadora e ao Bloco de Notas
+- `pararRecursos()` para o `Timeline` e fecha janela destacada ao fazer logout/fechar
 - `atualizarView()` chamado pelo `MainController` ao navegar de volta ao módulo
 
 ### Model / DAO / Service
@@ -303,3 +304,4 @@ Todas as partes do sistema que apareciam com cores claras no modo escuro foram c
 | 24/jun/2026  | Correção completa do modo escuro: diálogos/alertas, menus de contexto, TableView, DatePicker, TextArea, ComboBox popups, lista de etiquetas — ver tabela de correções acima |
 | 24/jun/2026  | Módulo Pomodoro implementado completo: timer com ciclo automático, sistema de metas Disciplina → Assunto, painel esquerdo programático com botões [−][+][▶][⋯], vinculação sessão/assunto, persistência de configurações em `pomodoro.properties`, CSS em ambos os temas |
 | 24/jun/2026  | Documentação Javadoc adicionada em português a todos os 51 arquivos Java do projeto (model, DAO, service, controller, util, view) |
+| 25/jun/2026  | Botão "↗ Destacar" / "↙ Reintegrar" adicionado ao módulo Pomodoro: toolbar + conteúdo migram juntos para janela separada, igualando o comportamento da Calculadora e do Bloco de Notas |

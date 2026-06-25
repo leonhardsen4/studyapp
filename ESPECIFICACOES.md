@@ -428,9 +428,10 @@ Construído programaticamente (`VBox listaDisciplinas`) com colunas expansíveis
 └─────────────────────┴────────────────────────────────────┘
 ```
 
-- Layout `BorderPane` + `SplitPane` dividerPositions=0.30.
+- Layout `BorderPane` externo (`container`) + `BorderPane` interno (`raiz`) + `SplitPane` dividerPositions=0.30.
 - Painel esquerdo: `VBox` + `ScrollPane` (lista de disciplinas/assuntos).
 - Painel direito: timer centralizado com botões de controle.
+- **Botão "↗ Destacar"** na toolbar: move `raiz` (toolbar + SplitPane) para uma `Stage` separada sempre no topo; `container` exibe placeholder. O botão passa a exibir "↙ Reintegrar" na janela destacada. Fechar a janela ou clicar em "↙ Reintegrar" devolve tudo ao painel principal — padrão idêntico ao da Calculadora e do Bloco de Notas.
 
 #### 7.3.6 Banco de dados
 
