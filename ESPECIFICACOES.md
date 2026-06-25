@@ -1,6 +1,6 @@
 # StudyApp — Especificações do Sistema
 
-**Versão:** 0.3
+**Versão:** 0.4
 **Tecnologias:** JavaFX 21, SQLite, Maven, Java 17+
 
 ---
@@ -347,10 +347,151 @@ Biblioteca de renderizacao Markdown: **`com.vladsch.flexmark:flexmark-all`**
 - Visualização mensal (grade) e diária (lista).
 - Eventos com título, data, hora início/fim e descrição.
 
-### 7.3 Temporizador Pomodoro
-- Ciclos: foco (25 min) + pausa curta (5 min) + pausa longa (15 min a cada 4 ciclos) — configuráveis.
-- Contagem regressiva + indicação do ciclo atual.
-- Notificação sonora ao fim de cada intervalo.
+### 7.3 Módulo Pomodoro (detalhamento completo)
+
+#### 7.3.1 Visão geral
+
+Combina o temporizador Pomodoro clássico com um sistema de **metas de estudo** organizado em Disciplina → Assunto. O progresso do assunto é vinculado às sessões de foco completadas pelo timer.
+
+#### 7.3.2 Hierarquia de metas de estudo
+
+**Disciplina**
+- Representa uma área de conhecimento (ex.: "Matemática", "Programação").
+- Cada usuário pode ter quantas disciplinas quiser.
+- Nomes únicos por usuário (`UNIQUE(usuario_id, nome)`).
+
+**Assunto**
+- Pertence a uma disciplina.
+- Campos: nome, nível de dificuldade, número mínimo de sessões, sessões realizadas, status, data limite (opcional).
+- **`TipoDificuldade`** (enum):
+  | Valor           | Label           | Sessões sugeridas |
+  |-----------------|-----------------|-------------------|
+  | `FACIL`         | Fácil           | 2                 |
+  | `MEDIO`         | Médio           | 4                 |
+  | `DIFICIL`       | Difícil         | 6                 |
+  | `MUITO_DIFICIL` | Muito Difícil   | 8                 |
+  - Ao criar um assunto, o campo "sessões mínimas" é pré-preenchido com o valor sugerido pela dificuldade, mas pode ser ajustado manualmente.
+- **`TipoStatusAssunto`** (enum): `PENDENTE` → `EM_ANDAMENTO` → `CONCLUIDO`
+  - `PENDENTE`: nenhuma sessão realizada.
+  - `EM_ANDAMENTO`: ao menos 1 sessão concluída.
+  - `CONCLUIDO`: marcado manualmente pelo usuário (não automático ao atingir o mínimo — o sistema oferece a opção em diálogo, mas não força a conclusão).
+  - Se sessões forem reduzidas abaixo do mínimo, `CONCLUIDO` é rebaixado automaticamente para `EM_ANDAMENTO`.
+
+#### 7.3.3 Timer Pomodoro
+
+**Fases:**
+| Fase          | Duração padrão | Configurável |
+|---------------|----------------|--------------|
+| Foco          | 25 min         | Sim          |
+| Pausa curta   | 5 min          | Sim          |
+| Pausa longa   | 15 min         | Sim          |
+
+**Ciclo:** 4 sessões de foco → pausa longa; sessões intermediárias → pausa curta.  
+Indicadores visuais dos slots do ciclo (🍅 preenchido / vazio).
+
+**Comportamento:**
+- Ao fim de cada fase, o timer toca um alarme sonoro (beep do sistema via `java.awt.Toolkit`) e avança automaticamente para a próxima fase já iniciada.
+- O usuário pode pausar, retomar (▶/⏸), reiniciar (↺) ou pular (⏭) a fase atual a qualquer momento.
+- Ao fim de uma sessão de **foco**, a sessão é registrada no banco e o contador do assunto selecionado é incrementado.
+
+**Configuração:**
+- Botão "⚙ Configurar" abre diálogo com `Spinner` para cada uma das três durações.
+- Preferências persistidas em `~/.studyapp/pomodoro.properties` entre sessões.
+
+#### 7.3.4 Painel esquerdo (metas)
+
+Construído programaticamente (`VBox listaDisciplinas`) com colunas expansíveis:
+- Cabeçalho de disciplina clicável (expande/colapsa a lista de assuntos).
+- Cada linha de assunto exibe: ícone de status, nome, indicador de data limite, contagem "X/Y 🍅", botões `[−]` `[+]` `[▶]` `[⋯]`.
+  - `[−]` / `[+]`: ajusta manualmente o contador de sessões do assunto.
+  - `[▶]`: seleciona o assunto para vinculação com o timer (destaca a linha em azul).
+  - `[⋯]`: abre menu de contexto com opções Editar, Marcar Concluído / Reabrir, Excluir.
+- Rodapé exibe estatísticas do dia: sessões de foco e tempo total de foco acumulados.
+
+#### 7.3.5 Layout do módulo
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  🍅 Pomodoro                              [⚙ Configurar] │ ← module-toolbar
+├─────────────────────┬────────────────────────────────────┤
+│ [+ Nova Disciplina] │                                    │
+│ ─────────────────── │      [Foco] [Pausa Curta] [Pausa]  │
+│ ▼ Matemática        │                                    │
+│   ○ Álgebra  2/4🍅  │        Estudando: Álgebra          │
+│   ● Geometria 0/2🍅 │                                    │
+│ ▶ Programação       │           25:00                    │
+│                     │                                    │
+│                     │      🍅 🍅 ○ ○  (ciclo atual)      │
+│                     │                                    │
+│ ─────────────────── │   [↺]  [▶ Iniciar]  [⏭]           │
+│ Hoje: 3🍅  75 min   │                                    │
+└─────────────────────┴────────────────────────────────────┘
+```
+
+- Layout `BorderPane` + `SplitPane` dividerPositions=0.30.
+- Painel esquerdo: `VBox` + `ScrollPane` (lista de disciplinas/assuntos).
+- Painel direito: timer centralizado com botões de controle.
+
+#### 7.3.6 Banco de dados
+
+```sql
+CREATE TABLE disciplina (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id  INTEGER NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+    nome        TEXT    NOT NULL,
+    criado_em   TEXT    NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(usuario_id, nome)
+);
+
+CREATE TABLE assunto (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    disciplina_id     INTEGER NOT NULL REFERENCES disciplina(id) ON DELETE CASCADE,
+    nome              TEXT    NOT NULL,
+    dificuldade       TEXT    NOT NULL CHECK(dificuldade IN ('FACIL','MEDIO','DIFICIL','MUITO_DIFICIL')),
+    sessoes_minimas   INTEGER NOT NULL,
+    sessoes_realizadas INTEGER NOT NULL DEFAULT 0,
+    status            TEXT    NOT NULL DEFAULT 'PENDENTE' CHECK(status IN ('PENDENTE','EM_ANDAMENTO','CONCLUIDO')),
+    data_limite       TEXT,   -- YYYY-MM-DD, nullable
+    criado_em         TEXT    NOT NULL DEFAULT (datetime('now')),
+    atualizado_em     TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE sessao_pomodoro (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id       INTEGER NOT NULL REFERENCES usuario(id),
+    assunto_id       INTEGER REFERENCES assunto(id) ON DELETE SET NULL,
+    tipo             TEXT    NOT NULL CHECK(tipo IN ('FOCO','PAUSA_CURTA','PAUSA_LONGA')),
+    iniciado_em      TEXT    NOT NULL,
+    concluido_em     TEXT    NOT NULL,
+    duracao_segundos INTEGER NOT NULL
+);
+```
+
+#### 7.3.7 Classes principais
+
+| Classe                      | Tipo       | Responsabilidade                                                       |
+|-----------------------------|------------|------------------------------------------------------------------------|
+| `model/Disciplina`          | Model      | POJO — id, usuarioId, nome, criadoEm                                   |
+| `model/Assunto`             | Model      | POJO — todos os campos do assunto + status + dataLimite                |
+| `model/SessaoPomodoro`      | Model      | POJO — registro de uma sessão concluída                                |
+| `model/TipoDificuldade`     | Enum       | FACIL/MEDIO/DIFICIL/MUITO_DIFICIL com label e sessõesDefault           |
+| `model/TipoStatusAssunto`   | Enum       | PENDENTE/EM_ANDAMENTO/CONCLUIDO com label                              |
+| `model/TipoSessao`          | Enum       | FOCO/PAUSA_CURTA/PAUSA_LONGA com label                                 |
+| `database/DisciplinaDAO`    | DAO        | CRUD + contarAssuntos                                                  |
+| `database/AssuntoDAO`       | DAO        | CRUD + buscarPorId + buscarPorDisciplina                               |
+| `database/SessaoPomodoroDAO`| DAO        | registrar + contarSessoesHoje + somarDuracaoHoje                       |
+| `service/PomodoroService`   | Service    | Lógica de negócio; coordena DAOs; regras de status do assunto          |
+| `controller/PomodoroController` | Controller | Timer (`Timeline` 1s), painel esquerdo, navegação, persistência de configurações |
+
+#### 7.3.8 CSS
+
+Estilos próprios do módulo em ambos os temas:
+- `.pomo-panel-esq`, `.pomo-disciplina-*`, `.pomo-assunto-item`, `.pomo-assunto-selecionado`
+- `.pomo-timer` (fonte 72px monospace), `.pomo-timer-pausa` (verde durante pausas)
+- `.pomo-btn-principal`, `.pomo-btn-pausar`, `.pomo-fase-btn`, `.pomo-fase-btn-ativo`
+- `.pomo-ciclo-cheio` (vermelho tomate), `.pomo-ciclo-vazio`
+- `.pomo-status-pendente`, `.pomo-status-em_andamento`, `.pomo-status-concluido`
+- `.pomodoro-stats` (rodapé de estatísticas)
 
 ### 7.4 Bloco de Notas Rápido
 - `TextArea` simples, sem formatação.
@@ -366,12 +507,17 @@ Biblioteca de renderizacao Markdown: **`com.vladsch.flexmark:flexmark-all`**
 
 ```
 usuario
-item_arvore   (→ usuario)
-nota          (→ item_arvore)
-pdf_documento (→ item_arvore)
-tarefa        (→ usuario)
-evento        (→ usuario)
-bloco_notas   (→ usuario)   -- uma linha por usuário
+item_arvore      (→ usuario)
+nota             (→ item_arvore)
+pdf_documento    (→ item_arvore)
+etiqueta         (→ usuario)
+tarefa           (→ usuario)
+tarefa_etiqueta  (→ tarefa, etiqueta)
+evento           (→ usuario)
+bloco_notas      (→ usuario)     -- uma linha por usuário
+disciplina       (→ usuario)
+assunto          (→ disciplina)
+sessao_pomodoro  (→ usuario, assunto)
 ```
 
 Arquivo: `~/.studyapp/studyapp.db`

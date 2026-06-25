@@ -27,6 +27,14 @@ Aplicação desktop de produtividade pessoal voltada para estudantes, desenvolvi
 - Eventos com hora de início/fim opcionais (dia inteiro ou com horário)
 - Notificações dos eventos do dia no badge do sino
 
+### Temporizador Pomodoro
+- Timer com fases configuráveis: Foco (25 min), Pausa Curta (5 min), Pausa Longa (15 min)
+- Ciclo automático de 4 sessões; indicadores visuais 🍅; alarme sonoro ao fim de cada fase
+- Sistema de **metas de estudo**: Disciplina → Assunto com nível de dificuldade, sessões mínimas e data limite opcional
+- Contagem de sessões por assunto com botões `[−]` e `[+]` para ajuste manual
+- Estatísticas diárias (sessões e tempo de foco acumulados no dia)
+- Configurações de duração persistidas entre sessões
+
 ### Bloco de Notas Rápido
 - Texto simples persistido por usuário
 - Botões Salvar .txt, Limpar e Destacar (abre em janela flutuante)
@@ -119,6 +127,7 @@ Todas as tabelas são criadas automaticamente na primeira execução:
 usuario · item_arvore · nota · pdf_documento
 etiqueta · tarefa · tarefa_etiqueta
 evento
+disciplina · assunto · sessao_pomodoro
 ```
 
 Os dados ficam em `~/.studyapp/studyapp.db` e são isolados por usuário logado.

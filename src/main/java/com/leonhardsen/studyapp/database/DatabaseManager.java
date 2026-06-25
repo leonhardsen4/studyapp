@@ -202,6 +202,45 @@ public class DatabaseManager {
                     criado_em    TEXT    NOT NULL DEFAULT (datetime('now'))
                 )
                 """);
+
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS disciplina (
+                    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                    usuario_id INTEGER NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+                    nome       TEXT    NOT NULL,
+                    criado_em  TEXT    NOT NULL DEFAULT (datetime('now')),
+                    UNIQUE(usuario_id, nome)
+                )
+                """);
+
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS assunto (
+                    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+                    disciplina_id      INTEGER NOT NULL REFERENCES disciplina(id) ON DELETE CASCADE,
+                    nome               TEXT    NOT NULL,
+                    dificuldade        TEXT    NOT NULL DEFAULT 'MEDIO'
+                                       CHECK(dificuldade IN ('FACIL','MEDIO','DIFICIL','MUITO_DIFICIL')),
+                    sessoes_minimas    INTEGER NOT NULL DEFAULT 4,
+                    sessoes_realizadas INTEGER NOT NULL DEFAULT 0,
+                    status             TEXT    NOT NULL DEFAULT 'PENDENTE'
+                                       CHECK(status IN ('PENDENTE','EM_ANDAMENTO','CONCLUIDO')),
+                    data_limite        TEXT,
+                    criado_em          TEXT    NOT NULL DEFAULT (datetime('now')),
+                    atualizado_em      TEXT    NOT NULL DEFAULT (datetime('now'))
+                )
+                """);
+
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS sessao_pomodoro (
+                    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                    usuario_id       INTEGER NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+                    assunto_id       INTEGER REFERENCES assunto(id) ON DELETE SET NULL,
+                    tipo             TEXT    NOT NULL CHECK(tipo IN ('FOCO','PAUSA_CURTA','PAUSA_LONGA')),
+                    iniciado_em      TEXT    NOT NULL,
+                    concluido_em     TEXT    NOT NULL,
+                    duracao_segundos INTEGER NOT NULL
+                )
+                """);
         }
     }
 

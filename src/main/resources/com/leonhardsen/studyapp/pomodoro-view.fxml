@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.leonhardsen.studyapp.controller.PomodoroController">
+
+    <!-- ═══════════════════ CABEÇALHO ═══════════════════ -->
+    <top>
+        <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
+            <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
+            <Label text="🍅 Pomodoro" styleClass="module-titulo"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="⚙ Configurar" onAction="#handleConfigurar" styleClass="btn-action">
+                <tooltip><Tooltip text="Ajustar durações das sessões"/></tooltip>
+            </Button>
+        </HBox>
+    </top>
+
+    <!-- ═══════════════════ CONTEÚDO ═══════════════════ -->
+    <center>
+        <SplitPane dividerPositions="0.30">
+
+            <!-- ── PAINEL ESQUERDO: Disciplinas e Assuntos ── -->
+            <VBox styleClass="pomo-panel-esq" minWidth="220">
+
+                <!-- Botões de ação -->
+                <HBox styleClass="file-panel-actions" spacing="6">
+                    <Button text="+ Disciplina" onAction="#handleNovaDisciplina" styleClass="btn-action">
+                        <tooltip><Tooltip text="Adicionar nova disciplina"/></tooltip>
+                    </Button>
+                    <Button fx:id="btnNovoAssunto" text="+ Assunto" onAction="#handleNovoAssunto"
+                            styleClass="btn-action" disable="true">
+                        <tooltip><Tooltip text="Adicionar assunto a uma disciplina"/></tooltip>
+                    </Button>
+                </HBox>
+
+                <!-- Lista de disciplinas/assuntos (construída dinamicamente) -->
+                <ScrollPane fx:id="scrollDisciplinas" VBox.vgrow="ALWAYS" fitToWidth="true"
+                            styleClass="pomo-scroll">
+                    <VBox fx:id="listaDisciplinas" styleClass="pomo-lista"/>
+                </ScrollPane>
+
+                <!-- Estatísticas do dia -->
+                <VBox styleClass="pomodoro-stats" spacing="4">
+                    <Label text="HOJE" styleClass="pomodoro-stats-titulo"/>
+                    <HBox spacing="10">
+                        <Label fx:id="lblSessoesHoje" text="0 sessões" styleClass="pomodoro-stats-valor"/>
+                        <Label text="·" styleClass="pomodoro-stats-sep"/>
+                        <Label fx:id="lblTempoHoje" text="0 min" styleClass="pomodoro-stats-valor"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- ── PAINEL DIREITO: Timer ── -->
+            <VBox styleClass="pomo-timer-panel" alignment="CENTER" spacing="24" VBox.vgrow="ALWAYS">
+
+                <!-- Seletor de fase -->
+                <HBox alignment="CENTER" spacing="4" styleClass="pomo-fases-container">
+                    <Button fx:id="btnFoco" text="Foco" onAction="#handleFaseFoco"
+                            styleClass="pomo-fase-btn">
+                        <tooltip><Tooltip text="Sessão de foco"/></tooltip>
+                    </Button>
+                    <Button fx:id="btnPausaCurta" text="Pausa Curta" onAction="#handleFasePausaCurta"
+                            styleClass="pomo-fase-btn">
+                        <tooltip><Tooltip text="Pausa curta entre sessões"/></tooltip>
+                    </Button>
+                    <Button fx:id="btnPausaLonga" text="Pausa Longa" onAction="#handleFasePausaLonga"
+                            styleClass="pomo-fase-btn">
+                        <tooltip><Tooltip text="Pausa longa após 4 sessões"/></tooltip>
+                    </Button>
+                </HBox>
+
+                <!-- Assunto em estudo -->
+                <Label fx:id="lblEstudando" text="Nenhum assunto selecionado"
+                       styleClass="pomodoro-estudando"/>
+
+                <!-- Display do timer -->
+                <Label fx:id="lblTimer" text="25:00" styleClass="pomo-timer"/>
+
+                <!-- Indicador de ciclo (🍅 🍅 ○ ○) -->
+                <HBox fx:id="hboxCiclo" alignment="CENTER" spacing="10"/>
+
+                <!-- Controles -->
+                <HBox alignment="CENTER" spacing="14">
+                    <Button fx:id="btnReiniciar" text="↺" onAction="#handleReiniciar"
+                            styleClass="btn-action" prefWidth="40" prefHeight="40">
+                        <tooltip><Tooltip text="Reiniciar fase atual"/></tooltip>
+                    </Button>
+                    <Button fx:id="btnIniciarPausar" text="▶  Iniciar" onAction="#handleIniciarPausar"
+                            styleClass="pomo-btn-principal"/>
+                    <Button fx:id="btnPular" text="⏭" onAction="#handlePular"
+                            styleClass="btn-action" prefWidth="40" prefHeight="40">
+                        <tooltip><Tooltip text="Pular para a próxima fase"/></tooltip>
+                    </Button>
+                </HBox>
+
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>

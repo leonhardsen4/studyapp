@@ -15,7 +15,7 @@
 | Sistema de arquivos       | ✅ Concluído  |
 | Gerenciador de Tarefas    | ✅ Concluído  |
 | Agenda                    | ✅ Concluído  |
-| Temporizador Pomodoro     | ⬜ Pendente   |
+| Temporizador Pomodoro     | ✅ Concluído  |
 | Bloco de notas rápido     | ✅ Concluído  |
 | Calculadora               | ✅ Concluído  |
 
@@ -136,10 +136,74 @@ evento (id, usuario_id, titulo, descricao, data TEXT YYYY-MM-DD, hora_inicio TEX
 
 ---
 
-## ⬜ Módulo 5 — Temporizador Pomodoro
+## ✅ Módulo 5 — Temporizador Pomodoro
 
-**Status:** Pendente  
-Ver seção 7.3 da `ESPECIFICACOES.md`.
+**Status:** Concluído
+
+### O que foi implementado
+
+#### Timer
+- `Timeline` com `KeyFrame` de 1 segundo; estado: `segundosRestantes`, `rodando`, `faseAtual`, `sessoesNoCiclo`
+- Fases: **Foco** (25 min), **Pausa Curta** (5 min), **Pausa Longa** (15 min) — durações configuráveis
+- Ciclo de 4 sessões: sessões 1–3 → pausa curta; sessão 4 → pausa longa; indicadores visuais do ciclo (🍅/○)
+- Ao fim de cada fase: alarme sonoro (`java.awt.Toolkit.beep()` em thread própria), avanço automático para a próxima fase já iniciada
+- Botões: ▶/⏸ (iniciar/pausar), ↺ (reiniciar fase), ⏭ (pular para próxima fase)
+- Configuração de durações via diálogo com `Spinner`; persistida em `~/.studyapp/pomodoro.properties`
+
+#### Sistema de metas de estudo (Disciplina → Assunto)
+- **`TipoDificuldade`** (enum): FACIL (2 sessões), MEDIO (4), DIFICIL (6), MUITO_DIFICIL (8) — pré-preenche o campo "sessões mínimas"
+- **`TipoStatusAssunto`** (enum): PENDENTE → EM_ANDAMENTO → CONCLUIDO
+  - Transições automáticas: ao completar 1ª sessão → EM_ANDAMENTO; ao reduzir sessões abaixo do mínimo → CONCLUIDO rebaixado para EM_ANDAMENTO
+  - CONCLUIDO marcado manualmente; ao atingir o mínimo de sessões, diálogo oferece a opção (sem forçar)
+- **Data limite opcional** por assunto, exibida como indicador colorido na lista
+
+#### Painel esquerdo (programático)
+- `VBox listaDisciplinas` construído dinamicamente em `recarregarListaDisciplinas()`
+- Cabeçalhos de disciplina clicáveis (expande/colapsa); estado de expansão mantido em `Set<Integer> expandidas`
+- Linha de assunto: ícone de status, nome, indicador de data limite, "X/Y 🍅", botões `[−]` `[+]` `[▶]` `[⋯]`
+  - `[−]`/`[+]`: chama `service.ajustarSessoes()` em background thread
+  - `[▶]`: seleciona assunto para vinculação ao timer (destaca `.pomo-assunto-selecionado`)
+  - `[⋯]`: menu de contexto com Editar, Marcar Concluído / Reabrir, Excluir
+- Rodapé: sessões de foco do dia + tempo total de foco (atualizados a cada sessão concluída)
+
+#### Integração com banco
+- Ao fim de cada sessão de foco: `service.registrarSessaoFoco()` em background + `service.incrementarSessao(assuntoId)` (se assunto selecionado) + `verificarMetaAssunto()` (diálogo de conclusão se atingiu mínimo)
+- Estatísticas diárias via `service.contarSessoesHoje()` e `service.somarDuracaoHoje()`
+
+#### CSS e tema
+- Classes `.pomo-*` adicionadas a `dark-theme.css` e `light-theme.css`
+- Timer em fonte 72px monospaced; cor verde (`.pomo-timer-pausa`) durante pausas
+- Todos os controles (Spinner, botões, headers) respeitam modo claro/escuro
+
+#### Infraestrutura
+- Navegação via botão "🍅 Pomodoro" na topbar com carregamento lazy (mesmo padrão dos demais módulos)
+- `pararRecursos()` para o `Timeline` ao fazer logout/fechar
+- `atualizarView()` chamado pelo `MainController` ao navegar de volta ao módulo
+
+### Model / DAO / Service
+
+| Classe                       | Responsabilidade                                                          |
+|------------------------------|---------------------------------------------------------------------------|
+| `model/Disciplina`           | POJO — id, usuarioId, nome, criadoEm                                      |
+| `model/Assunto`              | POJO — nome, dificuldade, sessõesMinimas/Realizadas, status, dataLimite   |
+| `model/SessaoPomodoro`       | POJO — usuarioId, assuntoId (nullable), tipo, início/fim, duração         |
+| `model/TipoDificuldade`      | Enum com label e sessõesDefault                                            |
+| `model/TipoStatusAssunto`    | Enum PENDENTE / EM_ANDAMENTO / CONCLUIDO                                  |
+| `model/TipoSessao`           | Enum FOCO / PAUSA_CURTA / PAUSA_LONGA                                     |
+| `database/DisciplinaDAO`     | inserir, atualizar, excluir, buscarPorUsuario, contarAssuntos              |
+| `database/AssuntoDAO`        | inserir, atualizar, excluir, buscarPorId, buscarPorDisciplina              |
+| `database/SessaoPomodoroDAO` | registrar, contarSessoesHoje, somarDuracaoHoje                            |
+| `service/PomodoroService`    | Orquestra DAOs; regras de status; métodos: criarDisciplina, criarAssunto, incrementarSessao, ajustarSessoes, marcarConcluido, reabrirAssunto, registrarSessaoFoco… |
+
+### Banco de dados
+```
+disciplina      (id, usuario_id, nome, criado_em) — UNIQUE(usuario_id, nome)
+assunto         (id, disciplina_id, nome, dificuldade, sessoes_minimas, sessoes_realizadas, status, data_limite, criado_em, atualizado_em)
+sessao_pomodoro (id, usuario_id, assunto_id, tipo, iniciado_em, concluido_em, duracao_segundos)
+```
+
+### Bugs corrigidos durante implementação
+- **`handleExcluirDisciplina`:** chamar `service.excluirDisciplina()` antes de mostrar diálogo de confirmação excluía a disciplina sem consentimento. **Correção:** contagem de assuntos obtida do mapa em memória; exclusão só ocorre após confirmação do usuário no FX thread.
 
 ---
 
@@ -237,3 +301,5 @@ Todas as partes do sistema que apareciam com cores claras no modo escuro foram c
 | 24/jun/2026  | Melhorias no módulo de tarefas: coluna de checkbox para marcar como concluída diretamente na tabela; callback `onTarefaAlterada` corrige bug onde o badge de notificações não era atualizado ao alterar tarefas; ordenação e ocultação de colunas habilitadas (`tableMenuButtonVisible="true"`) |
 | 24/jun/2026  | Botão "Limpar" adicionado ao Bloco de Notas |
 | 24/jun/2026  | Correção completa do modo escuro: diálogos/alertas, menus de contexto, TableView, DatePicker, TextArea, ComboBox popups, lista de etiquetas — ver tabela de correções acima |
+| 24/jun/2026  | Módulo Pomodoro implementado completo: timer com ciclo automático, sistema de metas Disciplina → Assunto, painel esquerdo programático com botões [−][+][▶][⋯], vinculação sessão/assunto, persistência de configurações em `pomodoro.properties`, CSS em ambos os temas |
+| 24/jun/2026  | Documentação Javadoc adicionada em português a todos os 51 arquivos Java do projeto (model, DAO, service, controller, util, view) |

@@ -23,6 +23,11 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Controlador da Agenda (calendário mensal).
+ * Exibe eventos em uma grade de calendário, permite navegar entre meses,
+ * criar/editar/excluir eventos e buscar por título com debounce.
+ */
 public class AgendaController {
 
     @FXML private Label      lblMesAno;
@@ -45,6 +50,10 @@ public class AgendaController {
 
     private static final DateTimeFormatter FMT_HORA_CURTA = DateTimeFormatter.ofPattern("H:mm");
 
+    /**
+     * Inicializa o controlador: configura as colunas do calendário, o debounce
+     * da busca e carrega os eventos do mês atual.
+     */
     @FXML
     public void initialize() {
         for (int i = 0; i < 7; i++) {
@@ -73,10 +82,20 @@ public class AgendaController {
         carregarMes();
     }
 
+    /**
+     * Define o callback a ser invocado quando um evento for criado, editado ou excluído.
+     * Permite que outras telas (ex.: painel principal) reajam às alterações.
+     *
+     * @param callback ação a executar após cada alteração de evento
+     */
     public void setOnEventoAlterado(Runnable callback) {
         this.onEventoAlterado = callback;
     }
 
+    /**
+     * Recarrega os eventos do mês atualmente exibido.
+     * Deve ser chamado ao navegar para esta tela.
+     */
     public void atualizarView() {
         carregarMes();
     }

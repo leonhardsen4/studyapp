@@ -1051,3 +1051,88 @@
 .table-view .table-cell {
     -fx-text-fill: #1A1A2E;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO POMODORO
+   ══════════════════════════════════════════════════════════════ */
+
+.pomo-panel-esq {
+    -fx-background-color: #F0F2F8;
+    -fx-border-color: transparent #D8DCE8 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+.pomo-scroll, .pomo-scroll > .viewport {
+    -fx-background-color: #F0F2F8;
+    -fx-background: #F0F2F8;
+}
+.pomo-lista { -fx-background-color: #F0F2F8; }
+
+.pomo-disciplina-container {
+    -fx-border-color: transparent transparent #E0E4EE transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.pomo-disciplina-header { -fx-cursor: hand; -fx-background-color: transparent; }
+.pomo-disciplina-header:hover { -fx-background-color: #E4E8F4; }
+.pomo-disciplina-nome { -fx-text-fill: #1B3A6B; -fx-font-weight: bold; -fx-font-size: 13px; }
+.pomo-seta { -fx-text-fill: #8090B0; -fx-font-size: 10px; }
+.pomo-disciplina-progresso { -fx-text-fill: #8090B0; -fx-font-size: 11px; }
+
+.pomo-assunto-item { -fx-cursor: hand; -fx-background-color: transparent; }
+.pomo-assunto-item:hover { -fx-background-color: #E8ECF8; }
+.pomo-assunto-selecionado { -fx-background-color: #D4E0F8 !important; }
+.pomo-assunto-nome { -fx-text-fill: #3A4A6A; -fx-font-size: 12px; }
+.pomo-sessoes-label { -fx-text-fill: #7080A0; -fx-font-size: 11px; }
+.pomo-vazio-hint { -fx-text-fill: #A0B0C0; -fx-font-size: 11px; -fx-font-style: italic; }
+
+.pomo-status-pendente     { -fx-text-fill: #8090B0; -fx-font-size: 12px; }
+.pomo-status-em_andamento { -fx-text-fill: #B07820; -fx-font-size: 12px; }
+.pomo-status-concluido    { -fx-text-fill: #307030; -fx-font-size: 12px; }
+
+.pomodoro-stats {
+    -fx-background-color: #E8ECF6;
+    -fx-border-color: #D8DCE8 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 10 12 10 12;
+}
+.pomodoro-stats-titulo { -fx-text-fill: #8090B0; -fx-font-size: 10px; -fx-font-weight: bold; }
+.pomodoro-stats-valor  { -fx-text-fill: #4A5A80; -fx-font-size: 12px; }
+.pomodoro-stats-sep    { -fx-text-fill: #B0B8CC; -fx-font-size: 12px; }
+
+.pomo-timer-panel { -fx-background-color: white; -fx-padding: 32 40 32 40; }
+
+.pomo-fases-container { -fx-background-color: #EEF2FA; -fx-background-radius: 24; -fx-padding: 4; }
+.pomo-fase-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8090B0;
+    -fx-background-radius: 20;
+    -fx-border-color: transparent;
+    -fx-padding: 6 16 6 16;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+.pomo-fase-btn:hover { -fx-background-color: #DDE4F4; -fx-text-fill: #3A4A6A; }
+.pomo-fase-btn-ativo { -fx-background-color: #1B3A6B !important; -fx-text-fill: white !important; -fx-font-weight: bold; }
+
+.pomodoro-estudando { -fx-text-fill: #8090B0; -fx-font-size: 13px; -fx-font-style: italic; }
+
+.pomo-timer { -fx-font-size: 72px; -fx-font-weight: bold; -fx-text-fill: #1B2A4A; -fx-font-family: "Monospaced"; }
+.pomo-timer-pausa { -fx-text-fill: #307030; }
+
+.pomo-ciclo-dot { -fx-font-size: 18px; }
+.pomo-ciclo-cheio { -fx-text-fill: #C03030; }
+.pomo-ciclo-vazio { -fx-text-fill: #C8D0E0; }
+
+.pomo-btn-principal {
+    -fx-background-color: #1B3A6B;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 24;
+    -fx-border-color: transparent;
+    -fx-padding: 12 40 12 40;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(27,58,107,0.35), 10, 0, 0, 3);
+}
+.pomo-btn-principal:hover { -fx-background-color: #2A5299; }
+.pomo-btn-pausar { -fx-background-color: #7A4E10; }
+.pomo-btn-pausar:hover { -fx-background-color: #9A6218; }

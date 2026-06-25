@@ -25,6 +25,12 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controlador da Calculadora Científica.
+ * Suporta operações matemáticas avançadas (trigonometria, logaritmos, combinatória,
+ * potências, raízes, funções hiperbólicas), memória, histórico persistente e modo DEG/RAD.
+ * O painel pode ser destacado em janela flutuante separada.
+ */
 public class CalculadoraController {
 
     @FXML private VBox       raiz;
@@ -90,6 +96,10 @@ public class CalculadoraController {
 
     // ── Inicialização ─────────────────────────────────────────────────────────
 
+    /**
+     * Inicializa o controlador: constrói a grade de botões, carrega o histórico
+     * e configura o listener de pré-visualização do resultado.
+     */
     @FXML
     public void initialize() {
         construirGrid();
@@ -106,6 +116,12 @@ public class CalculadoraController {
         });
     }
 
+    /**
+     * Define o contêiner principal no qual o painel da calculadora está inserido.
+     * Necessário para reatachar o painel após destacá-lo em janela separada.
+     *
+     * @param container painel raiz da tela principal
+     */
     public void setContainer(BorderPane container) {
         this.container = container;
     }
@@ -525,6 +541,10 @@ public class CalculadoraController {
         janelaDestacada = null;
     }
 
+    /**
+     * Fecha a janela destacada (se estiver aberta).
+     * Deve ser chamado ao encerrar o aplicativo.
+     */
     public void pararRecursos() {
         if (janelaDestacada != null) { janelaDestacada.close(); janelaDestacada = null; }
     }

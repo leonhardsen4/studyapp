@@ -23,6 +23,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Controlador do módulo de Tarefas.
+ * Exibe uma tabela com todas as tarefas do usuário, permite criar/editar/excluir
+ * tarefas, gerenciar etiquetas e filtrar por texto, status ou etiqueta.
+ */
 public class TarefasController {
 
     // ── Filtros ───────────────────────────────────────────────────────────────
@@ -60,6 +65,12 @@ public class TarefasController {
     private Integer tarefaIdPendente = null;
     private Runnable onTarefaAlterada;
 
+    /**
+     * Define o callback a ser invocado quando uma tarefa ou etiqueta for criada,
+     * editada ou excluída. Permite que outras telas reajam às alterações.
+     *
+     * @param callback ação a executar após cada alteração
+     */
     public void setOnTarefaAlterada(Runnable callback) {
         this.onTarefaAlterada = callback;
     }
@@ -68,6 +79,10 @@ public class TarefasController {
         if (onTarefaAlterada != null) onTarefaAlterada.run();
     }
 
+    /**
+     * Inicializa o controlador: configura a tabela, filtros, lista de etiquetas,
+     * atalhos de teclado e carrega os dados do usuário logado.
+     */
     @FXML
     public void initialize() {
         configurarTabela();

@@ -11,16 +11,32 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Objeto de acesso a dados (DAO) para a entidade {@link Evento}.
+ * Realiza operações CRUD na tabela {@code evento} do banco de dados SQLite.
+ */
 public class EventoDAO {
 
     private final DatabaseManager dbManager;
     private static final DateTimeFormatter FMT_HORA = DateTimeFormatter.ofPattern("HH:mm");
     private static final DateTimeFormatter FMT_DT   = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    /**
+     * Cria um novo DAO usando o gerenciador de banco de dados informado.
+     *
+     * @param dbManager gerenciador de conexão com o banco de dados
+     */
     public EventoDAO(DatabaseManager dbManager) {
         this.dbManager = dbManager;
     }
 
+    /**
+     * Insere um novo evento no banco de dados e retorna o ID gerado.
+     *
+     * @param e evento a ser inserido (sem ID definido)
+     * @return ID gerado pelo banco de dados, ou {@code -1} em caso de falha
+     * @throws SQLException se ocorrer erro na operação
+     */
     public int inserir(Evento e) throws SQLException {
         String sql = """
             INSERT INTO evento (usuario_id, titulo, descricao, data, hora_inicio, hora_fim)
@@ -39,6 +55,12 @@ public class EventoDAO {
         }
     }
 
+    /**
+     * Atualiza os dados de um evento existente no banco de dados.
+     *
+     * @param e evento com os dados atualizados (deve ter ID válido)
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void atualizar(Evento e) throws SQLException {
         String sql = "UPDATE evento SET titulo=?, descricao=?, data=?, hora_inicio=?, hora_fim=? WHERE id=?";
         try (PreparedStatement ps = dbManager.getConexao().prepareStatement(sql)) {
@@ -52,6 +74,12 @@ public class EventoDAO {
         }
     }
 
+    /**
+     * Exclui o evento com o ID informado.
+     *
+     * @param id identificador do evento a excluir
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void excluir(int id) throws SQLException {
         try (PreparedStatement ps = dbManager.getConexao().prepareStatement("DELETE FROM evento WHERE id=?")) {
             ps.setInt(1, id);
@@ -59,6 +87,15 @@ public class EventoDAO {
         }
     }
 
+    /**
+     * Retorna todos os eventos de um usuário em um mês/ano específico, ordenados por data e hora.
+     *
+     * @param usuarioId identificador do usuário
+     * @param ano       ano desejado
+     * @param mes       mês desejado (1–12)
+     * @return lista de eventos do período (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<Evento> buscarPorMes(int usuarioId, int ano, int mes) throws SQLException {
         LocalDate inicio = LocalDate.of(ano, mes, 1);
         LocalDate fim    = YearMonth.of(ano, mes).atEndOfMonth();
@@ -75,6 +112,15 @@ public class EventoDAO {
         }
     }
 
+    /**
+     * Busca eventos cujo título contenha o termo informado (pesquisa parcial, case-insensitive).
+     * Retorna no máximo 30 resultados, ordenados por data decrescente.
+     *
+     * @param usuarioId identificador do usuário
+     * @param titulo    texto a buscar no título
+     * @return lista de eventos correspondentes (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<Evento> buscarPorTitulo(int usuarioId, String titulo) throws SQLException {
         String sql = """
             SELECT * FROM evento
@@ -89,6 +135,13 @@ public class EventoDAO {
         }
     }
 
+    /**
+     * Retorna todos os eventos do usuário para a data de hoje, ordenados por hora de início.
+     *
+     * @param usuarioId identificador do usuário
+     * @return lista de eventos de hoje (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<Evento> buscarHoje(int usuarioId) throws SQLException {
         String sql = "SELECT * FROM evento WHERE usuario_id = ? AND data = ? ORDER BY hora_inicio";
         try (PreparedStatement ps = dbManager.getConexao().prepareStatement(sql)) {

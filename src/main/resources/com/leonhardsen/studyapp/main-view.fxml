@@ -37,6 +37,10 @@
                         onAction="#handleNavCalculadora">
                     <tooltip><Tooltip text="Calculadora científica"/></tooltip>
                 </Button>
+                <Button fx:id="btnNavPomodoro" text="🍅 Pomodoro" styleClass="btn-nav"
+                        onAction="#handleNavPomodoro">
+                    <tooltip><Tooltip text="Timer Pomodoro e metas de estudo"/></tooltip>
+                </Button>
             </HBox>
 
             <Region HBox.hgrow="ALWAYS"/>
@@ -73,6 +77,9 @@
 
         <!-- Container da calculadora (oculto por padrão) -->
         <BorderPane fx:id="painelCalculadoraContainer" visible="false" managed="false"/>
+
+        <!-- Container do Pomodoro (oculto por padrão) -->
+        <BorderPane fx:id="painelPomodoroContainer" visible="false" managed="false"/>
 
         <!-- Container do sistema de arquivos -->
         <VBox fx:id="painelArquivosContainer">

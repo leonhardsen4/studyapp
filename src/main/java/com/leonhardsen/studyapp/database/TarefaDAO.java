@@ -12,6 +12,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Objeto de acesso a dados (DAO) para a entidade {@link Tarefa}.
+ * Realiza operações CRUD na tabela {@code tarefa} e gerencia o vínculo
+ * com etiquetas via tabela associativa {@code tarefa_etiqueta}.
+ */
 public class TarefaDAO {
 
     private static final DateTimeFormatter FMT_DT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -19,10 +24,22 @@ public class TarefaDAO {
 
     private final DatabaseManager db;
 
+    /**
+     * Cria um novo DAO usando o gerenciador de banco de dados informado.
+     *
+     * @param db gerenciador de conexão com o banco de dados
+     */
     public TarefaDAO(DatabaseManager db) {
         this.db = db;
     }
 
+    /**
+     * Insere uma nova tarefa no banco de dados e retorna o ID gerado.
+     *
+     * @param t tarefa a ser inserida (sem ID definido)
+     * @return ID gerado pelo banco de dados, ou {@code -1} em caso de falha
+     * @throws SQLException se ocorrer erro na operação
+     */
     public int inserir(Tarefa t) throws SQLException {
         String sql = """
             INSERT INTO tarefa(usuario_id, titulo, anotacoes, prioridade, status, data_vencimento)
@@ -46,6 +63,12 @@ public class TarefaDAO {
         }
     }
 
+    /**
+     * Atualiza os dados de uma tarefa existente no banco de dados.
+     *
+     * @param t tarefa com os dados atualizados (deve ter ID válido)
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void atualizar(Tarefa t) throws SQLException {
         String sql = """
             UPDATE tarefa
@@ -68,6 +91,12 @@ public class TarefaDAO {
         }
     }
 
+    /**
+     * Exclui a tarefa com o ID informado.
+     *
+     * @param tarefaId identificador da tarefa a excluir
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void excluir(int tarefaId) throws SQLException {
         String sql = "DELETE FROM tarefa WHERE id = ?";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
@@ -76,6 +105,13 @@ public class TarefaDAO {
         }
     }
 
+    /**
+     * Retorna todas as tarefas de um usuário com suas etiquetas, ordenadas pela data de atualização.
+     *
+     * @param usuarioId identificador do usuário
+     * @return lista de tarefas com etiquetas carregadas (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<Tarefa> buscarTodas(int usuarioId) throws SQLException {
         String sql = """
             SELECT id, usuario_id, titulo, anotacoes, prioridade, status,
@@ -97,6 +133,13 @@ public class TarefaDAO {
         return lista;
     }
 
+    /**
+     * Retorna as etiquetas vinculadas a uma tarefa específica, ordenadas pelo nome.
+     *
+     * @param tarefaId identificador da tarefa
+     * @return lista de etiquetas da tarefa (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<Etiqueta> buscarEtiquetasDaTarefa(int tarefaId) throws SQLException {
         String sql = """
             SELECT e.id, e.usuario_id, e.nome, e.criado_em
@@ -118,6 +161,13 @@ public class TarefaDAO {
         return lista;
     }
 
+    /**
+     * Vincula uma etiqueta a uma tarefa. Ignora silenciosamente se o vínculo já existir.
+     *
+     * @param tarefaId   identificador da tarefa
+     * @param etiquetaId identificador da etiqueta
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void vincularEtiqueta(int tarefaId, int etiquetaId) throws SQLException {
         String sql = "INSERT OR IGNORE INTO tarefa_etiqueta(tarefa_id, etiqueta_id) VALUES(?, ?)";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
@@ -127,6 +177,13 @@ public class TarefaDAO {
         }
     }
 
+    /**
+     * Remove todos os vínculos de etiquetas de uma tarefa.
+     * Deve ser chamado antes de redefinir as etiquetas ao atualizar uma tarefa.
+     *
+     * @param tarefaId identificador da tarefa
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void desvincularTodasEtiquetas(int tarefaId) throws SQLException {
         String sql = "DELETE FROM tarefa_etiqueta WHERE tarefa_id = ?";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {

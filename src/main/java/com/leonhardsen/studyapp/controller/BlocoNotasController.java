@@ -19,6 +19,12 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 
+/**
+ * Controlador do Bloco de Notas.
+ * Gerencia a edição de texto livre com auto-salvamento em arquivo local,
+ * exportação para {@code .txt} e a capacidade de destacar o painel em
+ * janela separada (modo flutuante).
+ */
 public class BlocoNotasController {
 
     @FXML private VBox     raiz;
@@ -30,6 +36,10 @@ public class BlocoNotasController {
     private Stage           janelaDestacada;
     private BorderPane      container;
 
+    /**
+     * Inicializa o controlador: configura o temporizador de auto-salvamento
+     * e carrega o conteúdo previamente salvo.
+     */
     @FXML
     public void initialize() {
         pausaAutoSave = new PauseTransition(Duration.seconds(1.5));
@@ -43,6 +53,12 @@ public class BlocoNotasController {
         carregarArquivo();
     }
 
+    /**
+     * Define o contêiner principal no qual o painel do bloco de notas está inserido.
+     * Necessário para reatachar o painel após destacá-lo em janela separada.
+     *
+     * @param container painel raiz da tela principal
+     */
     public void setContainer(BorderPane container) {
         this.container = container;
     }
@@ -183,6 +199,11 @@ public class BlocoNotasController {
 
     // ── Limpeza ────────────────────────────────────────────────────────────────
 
+    /**
+     * Para o temporizador de auto-salvamento, salva o conteúdo imediatamente
+     * e fecha a janela destacada (se estiver aberta).
+     * Deve ser chamado ao encerrar o aplicativo.
+     */
     public void pararRecursos() {
         if (pausaAutoSave != null) {
             pausaAutoSave.stop();

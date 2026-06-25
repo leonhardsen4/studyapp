@@ -6,14 +6,32 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Objeto de acesso a dados (DAO) para a entidade {@link Etiqueta}.
+ * Realiza operações CRUD na tabela {@code etiqueta} do banco de dados SQLite,
+ * incluindo gerenciamento do vínculo com tarefas via {@code tarefa_etiqueta}.
+ */
 public class EtiquetaDAO {
 
     private final DatabaseManager db;
 
+    /**
+     * Cria um novo DAO usando o gerenciador de banco de dados informado.
+     *
+     * @param db gerenciador de conexão com o banco de dados
+     */
     public EtiquetaDAO(DatabaseManager db) {
         this.db = db;
     }
 
+    /**
+     * Insere uma nova etiqueta no banco de dados e retorna o ID gerado.
+     *
+     * @param usuarioId identificador do usuário proprietário
+     * @param nome      nome da etiqueta
+     * @return ID gerado pelo banco de dados, ou {@code -1} em caso de falha
+     * @throws SQLException se ocorrer erro na operação
+     */
     public int inserir(int usuarioId, String nome) throws SQLException {
         String sql = "INSERT INTO etiqueta(usuario_id, nome) VALUES(?, ?)";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -26,6 +44,13 @@ public class EtiquetaDAO {
         }
     }
 
+    /**
+     * Retorna todas as etiquetas de um usuário, ordenadas pelo nome.
+     *
+     * @param usuarioId identificador do usuário
+     * @return lista de etiquetas (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<Etiqueta> buscarTodas(int usuarioId) throws SQLException {
         String sql = "SELECT id, usuario_id, nome, criado_em FROM etiqueta WHERE usuario_id = ? ORDER BY nome COLLATE NOCASE";
         List<Etiqueta> lista = new ArrayList<>();
@@ -40,6 +65,13 @@ public class EtiquetaDAO {
         return lista;
     }
 
+    /**
+     * Busca uma etiqueta pelo seu identificador único.
+     *
+     * @param id identificador da etiqueta
+     * @return a etiqueta encontrada, ou {@code null} se não existir
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public Etiqueta buscarPorId(int id) throws SQLException {
         String sql = "SELECT id, usuario_id, nome, criado_em FROM etiqueta WHERE id = ?";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
@@ -50,6 +82,13 @@ public class EtiquetaDAO {
         }
     }
 
+    /**
+     * Atualiza o nome de uma etiqueta existente no banco de dados.
+     *
+     * @param id       identificador da etiqueta
+     * @param novoNome novo nome a ser definido
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void atualizarNome(int id, String novoNome) throws SQLException {
         String sql = "UPDATE etiqueta SET nome = ? WHERE id = ?";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
@@ -59,6 +98,12 @@ public class EtiquetaDAO {
         }
     }
 
+    /**
+     * Exclui a etiqueta com o ID informado e remove todos os vínculos com tarefas.
+     *
+     * @param id identificador da etiqueta a excluir
+     * @throws SQLException se ocorrer erro na operação
+     */
     public void excluir(int id) throws SQLException {
         String sql = "DELETE FROM etiqueta WHERE id = ?";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
