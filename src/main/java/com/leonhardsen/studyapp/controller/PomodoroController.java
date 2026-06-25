@@ -886,10 +886,22 @@ public class PomodoroController {
         msg.setStyle("-fx-text-fill: #9090A8; -fx-font-size: 13px;");
         msg.setTextAlignment(TextAlignment.CENTER);
         placeholder.getChildren().addAll(ico, msg);
-
         container.setCenter(placeholder);
+        btnDetachar.setDisable(true);
 
-        Scene cenaSep = new Scene(raiz, 1020, 640);
+        Button btnReintegrar = new Button("↙ Reintegrar");
+        btnReintegrar.getStyleClass().add("btn-action");
+        btnReintegrar.setOnAction(e -> reatachar());
+        HBox toolbarDest = new HBox(btnReintegrar);
+        toolbarDest.setAlignment(Pos.CENTER_RIGHT);
+        toolbarDest.setPadding(new Insets(6, 12, 6, 12));
+        toolbarDest.getStyleClass().add("module-toolbar");
+
+        BorderPane wrapperDest = new BorderPane();
+        wrapperDest.setTop(toolbarDest);
+        wrapperDest.setCenter(raiz);
+
+        Scene cenaSep = new Scene(wrapperDest, 1020, 640);
         cenaSep.getStylesheets().addAll(cenaPrincipal.getStylesheets());
 
         janelaDestacada = new Stage();
@@ -898,15 +910,14 @@ public class PomodoroController {
         janelaDestacada.setScene(cenaSep);
         janelaDestacada.setOnCloseRequest(e -> { e.consume(); reatachar(); });
 
-        btnDetachar.setText("↙ Reintegrar");
         janelaDestacada.show();
     }
 
     private void reatachar() {
         if (janelaDestacada == null) return;
-        janelaDestacada.getScene().setRoot(new Region());
+        ((BorderPane) janelaDestacada.getScene().getRoot()).setCenter(new Region());
         container.setCenter(raiz);
-        btnDetachar.setText("↗ Destacar");
+        btnDetachar.setDisable(false);
         janelaDestacada.close();
         janelaDestacada = null;
     }
