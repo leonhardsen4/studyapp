@@ -4,7 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21"
+<BorderPane fx:id="container"
+            xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.leonhardsen.studyapp.controller.PomodoroController">
 
@@ -17,12 +18,15 @@
             <Button text="⚙ Configurar" onAction="#handleConfigurar" styleClass="btn-action">
                 <tooltip><Tooltip text="Ajustar durações das sessões"/></tooltip>
             </Button>
+            <Button fx:id="btnDetachar" text="↗ Destacar" onAction="#handleDetachar" styleClass="btn-action">
+                <tooltip><Tooltip text="Abrir em janela separada"/></tooltip>
+            </Button>
         </HBox>
     </top>
 
     <!-- ═══════════════════ CONTEÚDO ═══════════════════ -->
     <center>
-        <SplitPane dividerPositions="0.30">
+        <SplitPane fx:id="raiz" dividerPositions="0.30">
 
             <!-- ── PAINEL ESQUERDO: Disciplinas e Assuntos ── -->
             <VBox styleClass="pomo-panel-esq" minWidth="220">

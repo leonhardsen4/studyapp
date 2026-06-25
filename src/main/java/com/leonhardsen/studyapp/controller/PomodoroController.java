@@ -10,8 +10,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.*;
@@ -27,6 +30,12 @@ import java.util.*;
  * As durações das sessões são configuráveis e persistidas em arquivo de propriedades.
  */
 public class PomodoroController {
+
+    // ── Raiz / container (destacar) ───────────────────────────────────────────
+    @FXML private BorderPane container;
+    @FXML private SplitPane  raiz;
+    @FXML private Button     btnDetachar;
+    private Stage janelaDestacada;
 
     // ── Painel esquerdo ───────────────────────────────────────────────────────
     @FXML private Button  btnNovoAssunto;
@@ -857,14 +866,62 @@ public class PomodoroController {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // DESTACAR / REINTEGRAR
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @FXML
+    private void handleDetachar() {
+        if (janelaDestacada != null) reatachar();
+        else destacar();
+    }
+
+    private void destacar() {
+        Scene cenaPrincipal = container.getScene();
+
+        VBox placeholder = new VBox(12);
+        placeholder.setAlignment(Pos.CENTER);
+        Label ico = new Label("🍅");
+        ico.setStyle("-fx-font-size: 40px;");
+        Label msg = new Label("Pomodoro aberto em\njanela separada");
+        msg.setStyle("-fx-text-fill: #9090A8; -fx-font-size: 13px;");
+        msg.setTextAlignment(TextAlignment.CENTER);
+        placeholder.getChildren().addAll(ico, msg);
+
+        container.setCenter(placeholder);
+
+        Scene cenaSep = new Scene(raiz, 1020, 640);
+        cenaSep.getStylesheets().addAll(cenaPrincipal.getStylesheets());
+
+        janelaDestacada = new Stage();
+        janelaDestacada.setTitle("🍅  Pomodoro — StudyApp");
+        janelaDestacada.setAlwaysOnTop(true);
+        janelaDestacada.setScene(cenaSep);
+        janelaDestacada.setOnCloseRequest(e -> { e.consume(); reatachar(); });
+
+        btnDetachar.setText("↙ Reintegrar");
+        janelaDestacada.show();
+    }
+
+    private void reatachar() {
+        if (janelaDestacada == null) return;
+        janelaDestacada.getScene().setRoot(new Region());
+        container.setCenter(raiz);
+        btnDetachar.setText("↗ Destacar");
+        janelaDestacada.close();
+        janelaDestacada = null;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // CICLO DE VIDA
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Para o timeline do timer. Deve ser chamado ao encerrar o aplicativo.
+     * Para o timeline do timer e fecha a janela destacada (se aberta).
+     * Deve ser chamado ao encerrar o aplicativo ou encerrar a sessão.
      */
     public void pararRecursos() {
         if (timerTimeline != null) timerTimeline.stop();
+        if (janelaDestacada != null) { janelaDestacada.close(); janelaDestacada = null; }
     }
 
     /**
