@@ -33,7 +33,7 @@ public class PomodoroController {
 
     // ── Raiz / container (destacar) ───────────────────────────────────────────
     @FXML private BorderPane container;
-    @FXML private SplitPane  raiz;
+    @FXML private BorderPane raiz;
     @FXML private Button     btnDetachar;
     private Stage janelaDestacada;
 
@@ -876,7 +876,7 @@ public class PomodoroController {
     }
 
     private void destacar() {
-        Scene cenaPrincipal = container.getScene();
+        Scene cenaPrincipal = raiz.getScene();
 
         VBox placeholder = new VBox(12);
         placeholder.setAlignment(Pos.CENTER);
@@ -887,21 +887,8 @@ public class PomodoroController {
         msg.setTextAlignment(TextAlignment.CENTER);
         placeholder.getChildren().addAll(ico, msg);
         container.setCenter(placeholder);
-        btnDetachar.setDisable(true);
 
-        Button btnReintegrar = new Button("↙ Reintegrar");
-        btnReintegrar.getStyleClass().add("btn-action");
-        btnReintegrar.setOnAction(e -> reatachar());
-        HBox toolbarDest = new HBox(btnReintegrar);
-        toolbarDest.setAlignment(Pos.CENTER_RIGHT);
-        toolbarDest.setPadding(new Insets(6, 12, 6, 12));
-        toolbarDest.getStyleClass().add("module-toolbar");
-
-        BorderPane wrapperDest = new BorderPane();
-        wrapperDest.setTop(toolbarDest);
-        wrapperDest.setCenter(raiz);
-
-        Scene cenaSep = new Scene(wrapperDest, 1020, 640);
+        Scene cenaSep = new Scene(raiz, 1020, 680);
         cenaSep.getStylesheets().addAll(cenaPrincipal.getStylesheets());
 
         janelaDestacada = new Stage();
@@ -910,14 +897,15 @@ public class PomodoroController {
         janelaDestacada.setScene(cenaSep);
         janelaDestacada.setOnCloseRequest(e -> { e.consume(); reatachar(); });
 
+        btnDetachar.setText("↙ Reintegrar");
         janelaDestacada.show();
     }
 
     private void reatachar() {
         if (janelaDestacada == null) return;
-        ((BorderPane) janelaDestacada.getScene().getRoot()).setCenter(new Region());
+        janelaDestacada.getScene().setRoot(new Region());
         container.setCenter(raiz);
-        btnDetachar.setDisable(false);
+        btnDetachar.setText("↗ Destacar");
         janelaDestacada.close();
         janelaDestacada = null;
     }
