@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.leonhardsen.studyapp.controller.CadastroController"
+           styleClass="auth-root">
+
+    <VBox styleClass="auth-card" maxWidth="380" spacing="0">
+
+        <!-- Cabeçalho -->
+        <VBox styleClass="auth-header" spacing="4">
+            <Label text="StudyApp" styleClass="auth-app-title"/>
+            <Label text="Criar nova conta" styleClass="auth-subtitle"/>
+        </VBox>
+
+        <!-- Formulário -->
+        <VBox styleClass="auth-form" spacing="14">
+            <VBox spacing="6">
+                <Label text="Nome completo" styleClass="form-label"/>
+                <TextField fx:id="tfNome" promptText="Seu nome" styleClass="form-input"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <Label text="E-mail" styleClass="form-label"/>
+                <TextField fx:id="tfEmail" promptText="seu@email.com" styleClass="form-input"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <Label text="Senha" styleClass="form-label"/>
+                <PasswordField fx:id="pfSenha" promptText="Mínimo 6 caracteres" styleClass="form-input"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <Label text="Confirmar senha" styleClass="form-label"/>
+                <PasswordField fx:id="pfConfirmarSenha" promptText="Repita a senha" styleClass="form-input"/>
+            </VBox>
+
+            <Label fx:id="labelErro" styleClass="error-label" wrapText="true" managed="false" visible="false"/>
+
+            <Button fx:id="btnCadastrar" text="Criar conta" onAction="#handleCadastrar"
+                    styleClass="btn-primary" maxWidth="Infinity"/>
+
+            <Separator/>
+
+            <HBox alignment="CENTER" spacing="4">
+                <Label text="Já tem conta?" styleClass="auth-link-text"/>
+                <Hyperlink text="Entrar" onAction="#handleVoltarLogin" styleClass="auth-link"/>
+            </HBox>
+        </VBox>
+
+    </VBox>
+</StackPane>

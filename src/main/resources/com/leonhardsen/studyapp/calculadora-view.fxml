@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="raiz"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.leonhardsen.studyapp.controller.CalculadoraController"
+      styleClass="calc-root">
+
+    <!-- ── Toolbar ── -->
+    <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
+        <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
+        <Label text="🧮 Calculadora" styleClass="module-titulo"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnDetachar" text="↗ Destacar" styleClass="btn-action"
+                onAction="#handleDetachar">
+            <tooltip><Tooltip text="Abrir em janela separada sempre no topo"/></tooltip>
+        </Button>
+    </HBox>
+    <Separator/>
+
+    <!-- ── Área principal: calculadora + histórico ── -->
+    <SplitPane dividerPositions="0.7" VBox.vgrow="ALWAYS">
+
+        <!-- Calculadora -->
+        <VBox styleClass="calc-painel">
+
+            <!-- Display -->
+            <VBox styleClass="calc-display" spacing="6">
+                <padding><Insets top="10" right="14" bottom="8" left="14"/></padding>
+                <TextArea fx:id="taExpressao" styleClass="calc-expressao"
+                          wrapText="true" prefRowCount="3"
+                          promptText="Digite ou monte a expressão aqui…"/>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label fx:id="lblModo" text="DEG" styleClass="calc-badge-modo"/>
+                    <Label fx:id="lblMemoria" text="" styleClass="calc-badge-mem"
+                           visible="false" managed="false"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblResultado" text="" styleClass="calc-resultado"/>
+                </HBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Grade de botões — construída dinamicamente no controller -->
+            <GridPane fx:id="gridBotoes" VBox.vgrow="ALWAYS" styleClass="calc-grid">
+                <padding><Insets top="6" right="8" bottom="8" left="8"/></padding>
+            </GridPane>
+
+        </VBox>
+
+        <!-- Histórico -->
+        <VBox styleClass="calc-historico">
+            <HBox styleClass="calc-hist-header" alignment="CENTER_LEFT" spacing="8">
+                <padding><Insets top="8" right="10" bottom="8" left="12"/></padding>
+                <Label text="Histórico" styleClass="calc-hist-titulo"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Limpar" styleClass="btn-action"
+                        onAction="#handleLimparHistorico">
+                    <tooltip><Tooltip text="Limpar todo o histórico"/></tooltip>
+                </Button>
+            </HBox>
+            <Separator/>
+            <ScrollPane fx:id="scrollHistorico" VBox.vgrow="ALWAYS" fitToWidth="true"
+                        styleClass="calc-hist-scroll">
+                <VBox fx:id="listaHistorico" styleClass="calc-hist-lista"/>
+            </ScrollPane>
+        </VBox>
+
+    </SplitPane>
+</VBox>

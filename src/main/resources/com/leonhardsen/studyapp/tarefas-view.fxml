@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.leonhardsen.studyapp.controller.TarefasController"
+      styleClass="tasks-root"
+      spacing="0"
+      fx:id="tarefasRoot">
+
+    <!-- Cabeçalho do módulo -->
+    <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
+        <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
+        <Label text="✓ Tarefas" styleClass="module-titulo"/>
+    </HBox>
+
+    <!-- Barra de filtros e ações -->
+    <HBox styleClass="tasks-filter-bar" spacing="8" alignment="CENTER_LEFT">
+        <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+
+        <Button text="+ Nova Tarefa" styleClass="btn-action" onAction="#handleNovaTarefa">
+            <tooltip><Tooltip text="Criar nova tarefa (Ctrl+N)"/></tooltip>
+        </Button>
+
+        <Separator orientation="VERTICAL"/>
+
+        <TextField fx:id="tfBusca" promptText="Buscar tarefas..." prefWidth="220"
+                   styleClass="filter-field" onKeyReleased="#handleFiltroAlterado">
+            <tooltip><Tooltip text="Filtra a tabela em tempo real"/></tooltip>
+        </TextField>
+
+        <Label text="Status:" styleClass="filter-label"/>
+        <ComboBox fx:id="cbFiltroStatus" promptText="Todos" onAction="#handleFiltroAlterado"
+                  styleClass="filter-combo" prefWidth="130"/>
+
+        <Label text="Etiqueta:" styleClass="filter-label"/>
+        <ComboBox fx:id="cbFiltroEtiqueta" promptText="Todas" onAction="#handleFiltroAlterado"
+                  styleClass="filter-combo" prefWidth="150"/>
+
+        <Button text="✕ Limpar" styleClass="btn-action" onAction="#handleLimparFiltros">
+            <tooltip><Tooltip text="Limpar todos os filtros"/></tooltip>
+        </Button>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label fx:id="lblContagem" styleClass="status-label" text="0 tarefas"/>
+    </HBox>
+
+    <!-- Conteúdo principal: etiquetas + tabela -->
+    <SplitPane fx:id="splitTarefas" dividerPositions="0.22" VBox.vgrow="ALWAYS">
+
+        <!-- Painel de etiquetas (esquerda) -->
+        <VBox styleClass="task-labels-panel" minWidth="150" prefWidth="200">
+            <HBox styleClass="labels-header" alignment="CENTER_LEFT" spacing="6">
+                <padding><Insets top="8" right="8" bottom="8" left="10"/></padding>
+                <Label text="Etiquetas" styleClass="panel-title" HBox.hgrow="ALWAYS"/>
+                <Button text="+" styleClass="btn-action" onAction="#handleNovaEtiqueta"
+                        prefWidth="28" prefHeight="24">
+                    <tooltip><Tooltip text="Nova etiqueta"/></tooltip>
+                </Button>
+            </HBox>
+            <Separator/>
+            <ListView fx:id="listEtiquetas" VBox.vgrow="ALWAYS" styleClass="labels-list"/>
+        </VBox>
+
+        <!-- Painel de tarefas (direita) -->
+        <VBox styleClass="tasks-panel">
+
+            <TableView fx:id="tableViewTarefas" VBox.vgrow="ALWAYS"
+                       styleClass="tasks-table" tableMenuButtonVisible="true">
+                <columns>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="110" minWidth="90"/>
+                    <TableColumn fx:id="colPrioridade" text="P" prefWidth="80" minWidth="60"/>
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="260" minWidth="120"/>
+                    <TableColumn fx:id="colEtiquetas" text="Etiquetas" prefWidth="180" minWidth="100" sortable="false"/>
+                    <TableColumn fx:id="colVencimento" text="Vencimento" prefWidth="110" minWidth="90"/>
+                    <TableColumn fx:id="colCriadoEm" text="Criado em" prefWidth="130" minWidth="100"/>
+                    <TableColumn fx:id="colAtualizadoEm" text="Atualizado" prefWidth="130" minWidth="100"/>
+                </columns>
+                <placeholder>
+                    <Label text="Nenhuma tarefa encontrada." styleClass="table-placeholder"/>
+                </placeholder>
+            </TableView>
+
+            <!-- Barra de ações da tabela -->
+            <HBox styleClass="tasks-action-bar" spacing="8" alignment="CENTER_LEFT">
+                <padding><Insets top="6" right="10" bottom="6" left="10"/></padding>
+                <Button fx:id="btnEditarTarefa" text="✏ Editar" styleClass="btn-action"
+                        disable="true" onAction="#handleEditarTarefaSelecionada">
+                    <tooltip><Tooltip text="Editar tarefa selecionada (Enter)"/></tooltip>
+                </Button>
+                <Button fx:id="btnExcluirTarefa" text="🗑 Excluir" styleClass="btn-action"
+                        disable="true" onAction="#handleExcluirTarefaSelecionada"
+                        style="-fx-text-fill: #c0392b;">
+                    <tooltip><Tooltip text="Excluir tarefa selecionada (Delete)"/></tooltip>
+                </Button>
+                <Button fx:id="btnRenomearEtiqueta" text="✏ Renomear etiqueta" styleClass="btn-action"
+                        disable="true" onAction="#handleRenomearEtiquetaSelecionada">
+                    <tooltip><Tooltip text="Renomear etiqueta selecionada"/></tooltip>
+                </Button>
+                <Button fx:id="btnExcluirEtiqueta" text="🗑 Excluir etiqueta" styleClass="btn-action"
+                        disable="true" onAction="#handleExcluirEtiquetaSelecionada"
+                        style="-fx-text-fill: #c0392b;">
+                    <tooltip><Tooltip text="Excluir etiqueta selecionada (e tarefas exclusivas)"/></tooltip>
+                </Button>
+            </HBox>
+        </VBox>
+    </SplitPane>
+</VBox>

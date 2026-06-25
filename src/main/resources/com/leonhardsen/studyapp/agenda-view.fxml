@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.leonhardsen.studyapp.controller.AgendaController"
+      styleClass="agenda-root">
+
+    <!-- Cabeçalho do módulo -->
+    <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
+        <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
+        <Label text="📅 Agenda" styleClass="module-titulo"/>
+    </HBox>
+
+    <!-- ── Barra de navegação de mês ── -->
+    <HBox styleClass="agenda-nav-bar" alignment="CENTER_LEFT" spacing="6">
+        <padding><Insets top="8" right="14" bottom="8" left="14"/></padding>
+        <Button text="◀" styleClass="btn-action" onAction="#handleMesAnterior"/>
+        <Label fx:id="lblMesAno" styleClass="agenda-mes-ano"
+               maxWidth="Infinity" alignment="CENTER" HBox.hgrow="ALWAYS"/>
+        <Button text="▶" styleClass="btn-action" onAction="#handleMesProximo"/>
+        <Separator orientation="VERTICAL" style="-fx-padding: 0 4 0 4;"/>
+        <Button text="Hoje" styleClass="btn-action" onAction="#handleHoje"/>
+        <Separator orientation="VERTICAL" style="-fx-padding: 0 4 0 4;"/>
+        <TextField fx:id="tfBusca" promptText="🔍  Pesquisar evento..." styleClass="agenda-busca"
+                   prefWidth="200"/>
+        <Button fx:id="btnLimparBusca" text="✕" styleClass="btn-action"
+                onAction="#handleLimparBusca" visible="false" managed="false">
+            <tooltip><Tooltip text="Limpar pesquisa"/></tooltip>
+        </Button>
+    </HBox>
+
+    <!-- ── SplitPane: calendário (esquerda) + painel do dia (direita) ── -->
+    <SplitPane dividerPositions="0.67" VBox.vgrow="ALWAYS">
+
+        <!-- Calendário mensal -->
+        <VBox styleClass="agenda-calendario-panel">
+
+            <!-- Cabeçalho com nomes dos dias da semana -->
+            <HBox styleClass="agenda-header-semana">
+                <Label text="Dom" styleClass="agenda-label-semana"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS" alignment="CENTER"/>
+                <Label text="Seg" styleClass="agenda-label-semana"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS" alignment="CENTER"/>
+                <Label text="Ter" styleClass="agenda-label-semana"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS" alignment="CENTER"/>
+                <Label text="Qua" styleClass="agenda-label-semana"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS" alignment="CENTER"/>
+                <Label text="Qui" styleClass="agenda-label-semana"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS" alignment="CENTER"/>
+                <Label text="Sex" styleClass="agenda-label-semana"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS" alignment="CENTER"/>
+                <Label text="Sáb" styleClass="agenda-label-semana"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS" alignment="CENTER"/>
+            </HBox>
+
+            <!-- Grade do calendário — células criadas dinamicamente no controller -->
+            <GridPane fx:id="gridCalendario" VBox.vgrow="ALWAYS" styleClass="agenda-grid"/>
+        </VBox>
+
+        <!-- Painel de eventos do dia selecionado -->
+        <VBox fx:id="painelDia" styleClass="agenda-dia-panel">
+
+            <HBox styleClass="agenda-dia-header" alignment="CENTER_LEFT" spacing="8">
+                <padding><Insets top="10" right="10" bottom="10" left="12"/></padding>
+                <Label fx:id="lblDiaSelecionado" styleClass="agenda-dia-titulo"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnNovoEvento" text="+ Evento" styleClass="btn-action"
+                        onAction="#handleNovoEvento"/>
+            </HBox>
+
+            <Separator/>
+
+            <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true" styleClass="agenda-scroll">
+                <VBox fx:id="listEventosDia" styleClass="agenda-lista-eventos" spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+
+    </SplitPane>
+</VBox>

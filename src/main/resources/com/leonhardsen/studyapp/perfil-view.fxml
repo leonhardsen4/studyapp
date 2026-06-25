@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.leonhardsen.studyapp.controller.PerfilController"
+      styleClass="perfil-root" spacing="0">
+
+    <!-- Cabeçalho -->
+    <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="10" minHeight="48">
+        <Label text="Perfil do Usuário" styleClass="topbar-title"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="perfil-scroll">
+        <VBox spacing="20" styleClass="perfil-content">
+
+            <!-- ── Seção: E-mail ─────────────────────────────── -->
+            <VBox styleClass="perfil-section" spacing="12">
+                <Label text="Alterar E-mail" styleClass="perfil-section-title"/>
+                <VBox spacing="6">
+                    <Label text="Novo e-mail" styleClass="form-label"/>
+                    <TextField fx:id="tfNovoEmail" promptText="novo@email.com" styleClass="form-input"/>
+                </VBox>
+                <VBox spacing="6">
+                    <Label text="Confirmar com senha atual" styleClass="form-label"/>
+                    <PasswordField fx:id="pfSenhaConfEmail" promptText="Sua senha atual" styleClass="form-input"/>
+                </VBox>
+                <Label fx:id="labelErroEmail" styleClass="error-label" wrapText="true" managed="false" visible="false"/>
+                <Label fx:id="labelSucessoEmail" styleClass="success-label" wrapText="true" managed="false" visible="false"/>
+                <Button text="Salvar novo e-mail" onAction="#handleAlterarEmail"
+                        styleClass="btn-primary" maxWidth="Infinity"/>
+            </VBox>
+
+            <Separator/>
+
+            <!-- ── Seção: Senha ──────────────────────────────── -->
+            <VBox styleClass="perfil-section" spacing="12">
+                <Label text="Alterar Senha" styleClass="perfil-section-title"/>
+                <VBox spacing="6">
+                    <Label text="Senha atual" styleClass="form-label"/>
+                    <PasswordField fx:id="pfSenhaAtual" promptText="Senha atual" styleClass="form-input"/>
+                </VBox>
+                <VBox spacing="6">
+                    <Label text="Nova senha" styleClass="form-label"/>
+                    <PasswordField fx:id="pfNovaSenha" promptText="Mínimo 6 caracteres" styleClass="form-input"/>
+                </VBox>
+                <VBox spacing="6">
+                    <Label text="Confirmar nova senha" styleClass="form-label"/>
+                    <PasswordField fx:id="pfConfirmarNovaSenha" promptText="Repita a nova senha" styleClass="form-input"/>
+                </VBox>
+                <Label fx:id="labelErroSenha" styleClass="error-label" wrapText="true" managed="false" visible="false"/>
+                <Label fx:id="labelSucessoSenha" styleClass="success-label" wrapText="true" managed="false" visible="false"/>
+                <Button text="Alterar senha" onAction="#handleAlterarSenha"
+                        styleClass="btn-primary" maxWidth="Infinity"/>
+            </VBox>
+
+            <Separator/>
+
+            <!-- ── Seção: Zona de Perigo ─────────────────────── -->
+            <VBox styleClass="perfil-section perfil-danger" spacing="12">
+                <Label text="Zona de Perigo" styleClass="perfil-danger-title"/>
+                <Label text="A exclusão da conta remove permanentemente todos os seus dados, incluindo notas, cadernos e PDFs. Esta ação não pode ser desfeita."
+                       styleClass="perfil-danger-desc" wrapText="true"/>
+                <Button text="Excluir minha conta" onAction="#handleExcluirConta"
+                        styleClass="btn-danger" maxWidth="Infinity"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+</VBox>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.leonhardsen.studyapp.controller.MainController"
+            styleClass="main-root">
+
+    <!-- ═══════════════════ TOPBAR ═══════════════════ -->
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="10" minHeight="48">
+            <Label text="StudyApp" styleClass="topbar-title"/>
+
+            <!-- Botões de navegação entre funcionalidades -->
+            <HBox spacing="4" alignment="CENTER">
+                <Button fx:id="btnNavArquivos" text="📁 Arquivos" styleClass="btn-nav, btn-nav-ativo"
+                        onAction="#handleNavArquivos">
+                    <tooltip><Tooltip text="Gerenciador de arquivos e notas"/></tooltip>
+                </Button>
+                <Button fx:id="btnNavTarefas" text="✓ Tarefas" styleClass="btn-nav"
+                        onAction="#handleNavTarefas">
+                    <tooltip><Tooltip text="Sistema de tarefas"/></tooltip>
+                </Button>
+                <Button fx:id="btnNavAgenda" text="📅 Agenda" styleClass="btn-nav"
+                        onAction="#handleNavAgenda">
+                    <tooltip><Tooltip text="Agenda e calendário de eventos"/></tooltip>
+                </Button>
+                <Button fx:id="btnNavBlocoNotas" text="📝 Notas" styleClass="btn-nav"
+                        onAction="#handleNavBlocoNotas">
+                    <tooltip><Tooltip text="Bloco de notas rápido"/></tooltip>
+                </Button>
+                <Button fx:id="btnNavCalculadora" text="🧮 Calculadora" styleClass="btn-nav"
+                        onAction="#handleNavCalculadora">
+                    <tooltip><Tooltip text="Calculadora científica"/></tooltip>
+                </Button>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="labelHora" styleClass="topbar-info"/>
+            <Label text=" • " styleClass="topbar-sep"/>
+            <Label fx:id="labelData" styleClass="topbar-info"/>
+            <Label text=" • " styleClass="topbar-sep"/>
+            <Label fx:id="labelUsuario" styleClass="topbar-info"/>
+            <StackPane alignment="CENTER">
+                <Button fx:id="btnNotificacoes" text="🔔" styleClass="btn-config"
+                        onAction="#handleNotificacoes">
+                    <tooltip><Tooltip text="Notificações de tarefas e eventos"/></tooltip>
+                </Button>
+                <Label fx:id="lblBadgeNotif" styleClass="notif-badge" visible="false" managed="false"
+                       mouseTransparent="true" StackPane.alignment="TOP_RIGHT"/>
+            </StackPane>
+            <Button fx:id="btnConfiguracoes" text="⚙" styleClass="btn-config"
+                    onAction="#handleAbrirConfiguracoes"/>
+        </HBox>
+    </top>
+
+    <!-- ═══════════════════ CONTEÚDO CENTRAL ═══════════════════ -->
+    <center>
+        <StackPane fx:id="stackCentral">
+
+        <!-- Container de tarefas (oculto por padrão) -->
+        <BorderPane fx:id="painelTarefasContainer" visible="false" managed="false"/>
+
+        <!-- Container de agenda (oculto por padrão) -->
+        <BorderPane fx:id="painelAgendaContainer" visible="false" managed="false"/>
+
+        <!-- Container do bloco de notas (oculto por padrão) -->
+        <BorderPane fx:id="painelBlocoNotasContainer" visible="false" managed="false"/>
+
+        <!-- Container da calculadora (oculto por padrão) -->
+        <BorderPane fx:id="painelCalculadoraContainer" visible="false" managed="false"/>
+
+        <!-- Container do sistema de arquivos -->
+        <VBox fx:id="painelArquivosContainer">
+            <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
+                <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
+                <Label text="📁 Arquivos" styleClass="module-titulo"/>
+            </HBox>
+            <SplitPane fx:id="splitPane" dividerPositions="0.22" VBox.vgrow="ALWAYS">
+
+            <!-- ── Painel de Arquivos (esquerda) ── -->
+            <VBox styleClass="file-panel" minWidth="180">
+
+                <!-- Botões de criação -->
+                <HBox styleClass="file-panel-actions" spacing="6">
+                    <Button text="+ Caderno" onAction="#handleNovoCaderno" styleClass="btn-action">
+                        <tooltip><Tooltip text="Novo caderno (ou sub-caderno se um caderno estiver selecionado)"/></tooltip>
+                    </Button>
+                    <Button text="+ Nota" onAction="#handleNovaNota" styleClass="btn-action">
+                        <tooltip><Tooltip text="Nova nota"/></tooltip>
+                    </Button>
+                    <Button text="+ PDF" onAction="#handleNovoPdf" styleClass="btn-action">
+                        <tooltip><Tooltip text="Importar PDF"/></tooltip>
+                    </Button>
+                </HBox>
+
+                <!-- Botões de organização do item selecionado -->
+                <HBox styleClass="file-panel-actions" spacing="6">
+                    <Button fx:id="btnSubirItem" text="↑" styleClass="btn-action" disable="true"
+                            onAction="#handleSubirItemSelecionado">
+                        <tooltip><Tooltip text="Mover item para cima (Ctrl+↑)"/></tooltip>
+                    </Button>
+                    <Button fx:id="btnDescerItem" text="↓" styleClass="btn-action" disable="true"
+                            onAction="#handleDescerItemSelecionado">
+                        <tooltip><Tooltip text="Mover item para baixo (Ctrl+↓)"/></tooltip>
+                    </Button>
+                    <Button fx:id="btnImprimirItem" text="🖨" styleClass="btn-action" disable="true"
+                            onAction="#handleImprimirItemSelecionado">
+                        <tooltip><Tooltip text="Imprimir / Exportar como PDF (abre no navegador)"/></tooltip>
+                    </Button>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnExcluirItem" text="Excluir" styleClass="btn-action" disable="true"
+                            onAction="#handleExcluirItemSelecionado"
+                            style="-fx-text-fill: #c0392b;">
+                        <tooltip><Tooltip text="Excluir item selecionado (Delete)"/></tooltip>
+                    </Button>
+                </HBox>
+
+                <Separator/>
+
+                <!-- Árvore de arquivos -->
+                <TreeView fx:id="treeViewArquivos" VBox.vgrow="ALWAYS" styleClass="file-tree"
+                          onMouseClicked="#handleSelecaoTree"/>
+            </VBox>
+
+            <!-- ── Área de Conteúdo (direita) ── -->
+            <StackPane fx:id="areaConteudo" styleClass="content-area">
+
+                <!-- Estado vazio -->
+                <VBox fx:id="painelVazio" alignment="CENTER" spacing="12" styleClass="empty-panel">
+                    <Label text="📂" style="-fx-font-size: 48px;"/>
+                    <Label text="Selecione um item para visualizar" styleClass="empty-panel-label"/>
+                    <Label text="ou crie um novo usando os botões acima" styleClass="empty-panel-hint"/>
+                </VBox>
+
+                <!-- Editor de Nota (Markdown) -->
+                <VBox fx:id="painelEditor" visible="false" managed="false">
+                    <!-- Barra do editor: título + toggle -->
+                    <HBox styleClass="editor-topbar" alignment="CENTER_LEFT" spacing="10">
+                        <Label fx:id="labelNomeNota" styleClass="editor-title" HBox.hgrow="ALWAYS"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnToggleEditor" text="Visualizar"
+                                onAction="#handleToggleEditor" styleClass="btn-toggle"/>
+                    </HBox>
+
+                    <!-- Toolbar de formatação -->
+                    <HBox fx:id="toolbarEditor" styleClass="editor-toolbar" spacing="4">
+                        <Button text="N" styleClass="btn-fmt" onAction="#handleFmtNegrito"
+                                style="-fx-font-weight: bold;">
+                            <tooltip><Tooltip text="Negrito"/></tooltip>
+                        </Button>
+                        <Button text="I" styleClass="btn-fmt" onAction="#handleFmtItalico"
+                                style="-fx-font-style: italic;">
+                            <tooltip><Tooltip text="Itálico"/></tooltip>
+                        </Button>
+                        <Button text="H1" styleClass="btn-fmt" onAction="#handleFmtH1">
+                            <tooltip><Tooltip text="Título 1"/></tooltip>
+                        </Button>
+                        <Button text="H2" styleClass="btn-fmt" onAction="#handleFmtH2">
+                            <tooltip><Tooltip text="Título 2"/></tooltip>
+                        </Button>
+                        <Button text="H3" styleClass="btn-fmt" onAction="#handleFmtH3">
+                            <tooltip><Tooltip text="Título 3"/></tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL"/>
+                        <Button text="{ }" styleClass="btn-fmt" onAction="#handleFmtCodigo">
+                            <tooltip><Tooltip text="Bloco de código"/></tooltip>
+                        </Button>
+                        <Button text="🔗" styleClass="btn-fmt" onAction="#handleFmtLink">
+                            <tooltip><Tooltip text="Link"/></tooltip>
+                        </Button>
+                        <Button text="📷" styleClass="btn-fmt" onAction="#handleFmtImagem">
+                            <tooltip><Tooltip text="Inserir imagem"/></tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL"/>
+                        <Button text="≡" styleClass="btn-fmt" onAction="#handleFmtLista">
+                            <tooltip><Tooltip text="Lista com marcadores"/></tooltip>
+                        </Button>
+                        <Button text="1." styleClass="btn-fmt" onAction="#handleFmtListaNum">
+                            <tooltip><Tooltip text="Lista numerada"/></tooltip>
+                        </Button>
+                        <Button text="━━" styleClass="btn-fmt" onAction="#handleFmtTabela">
+                            <tooltip><Tooltip text="Inserir tabela"/></tooltip>
+                        </Button>
+                        <Button text="∑" styleClass="btn-fmt" onAction="#handleFmtFormula">
+                            <tooltip><Tooltip text="Fórmula matemática"/></tooltip>
+                        </Button>
+                    </HBox>
+
+                    <!-- Área de edição / visualização -->
+                    <StackPane VBox.vgrow="ALWAYS">
+                        <TextArea fx:id="textAreaEditor" styleClass="editor-textarea" wrapText="true"/>
+                        <WebView fx:id="webViewPreview" visible="false" managed="false"/>
+                    </StackPane>
+
+                    <!-- Status bar -->
+                    <HBox styleClass="editor-status" alignment="CENTER_RIGHT">
+                        <Label fx:id="labelStatusSave" text="Salvo" styleClass="status-label"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Visualizador de PDF -->
+                <VBox fx:id="painelPdf" visible="false" managed="false">
+                    <!-- Controles do PDF -->
+                    <HBox styleClass="pdf-toolbar" alignment="CENTER" spacing="12">
+                        <Button text="◀" onAction="#handlePdfAnterior" styleClass="btn-action"/>
+                        <Label fx:id="labelPdfPagina" text="Página 1 de 1" styleClass="topbar-info"/>
+                        <Button text="▶" onAction="#handlePdfProxima" styleClass="btn-action"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Button text="−" onAction="#handlePdfZoomMenos" styleClass="btn-action"/>
+                        <Label fx:id="labelPdfZoom" text="100%" styleClass="topbar-info"/>
+                        <Button text="+" onAction="#handlePdfZoomMais" styleClass="btn-action"/>
+                    </HBox>
+                    <ScrollPane fx:id="scrollPdf" VBox.vgrow="ALWAYS" fitToWidth="true" styleClass="pdf-scroll">
+                        <StackPane>
+                            <javafx.scene.image.ImageView fx:id="imagePdf" preserveRatio="true" smooth="true"/>
+                        </StackPane>
+                    </ScrollPane>
+                </VBox>
+
+            </StackPane>
+            </SplitPane>
+        </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>
