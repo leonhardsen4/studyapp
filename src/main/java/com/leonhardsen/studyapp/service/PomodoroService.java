@@ -264,4 +264,27 @@ public class PomodoroService {
     public int somarDuracaoHoje(int usuarioId) throws SQLException {
         return sessaoDAO.somarDuracaoHoje(usuarioId);
     }
+
+    /**
+     * Retorna a soma total (em segundos) de todas as sessões de foco realizadas para um assunto.
+     *
+     * @param assuntoId identificador do assunto
+     * @return total de segundos de foco do assunto
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public int somarDuracaoPorAssunto(int assuntoId) throws SQLException {
+        return sessaoDAO.somarDuracaoPorAssunto(assuntoId);
+    }
+
+    /**
+     * Retorna a soma total (em segundos) de todas as sessões de foco realizadas para todos os
+     * assuntos de uma disciplina.
+     *
+     * @param disciplinaId identificador da disciplina
+     * @return total de segundos de foco da disciplina
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public int somarDuracaoPorDisciplina(int disciplinaId) throws SQLException {
+        return sessaoDAO.somarDuracaoPorDisciplina(disciplinaId);
+    }
 }

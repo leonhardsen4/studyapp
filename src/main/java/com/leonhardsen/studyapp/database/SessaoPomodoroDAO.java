@@ -68,6 +68,49 @@ public class SessaoPomodoroDAO {
     }
 
     /**
+     * Soma a duração total (em segundos) de todas as sessões de foco realizadas para um assunto.
+     *
+     * @param assuntoId identificador do assunto
+     * @return total de segundos de foco acumulados no assunto, ou {@code 0} se nenhuma sessão existir
+     * @throws SQLException se ocorrer erro na consulta
+     */
+    public int somarDuracaoPorAssunto(int assuntoId) throws SQLException {
+        String sql = """
+            SELECT COALESCE(SUM(duracao_segundos), 0) FROM sessao_pomodoro
+            WHERE assunto_id = ? AND tipo = 'FOCO'
+            """;
+        try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
+            ps.setInt(1, assuntoId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    /**
+     * Soma a duração total (em segundos) de todas as sessões de foco realizadas para todos os
+     * assuntos de uma disciplina.
+     *
+     * @param disciplinaId identificador da disciplina
+     * @return total de segundos de foco acumulados na disciplina, ou {@code 0} se nenhuma sessão existir
+     * @throws SQLException se ocorrer erro na consulta
+     */
+    public int somarDuracaoPorDisciplina(int disciplinaId) throws SQLException {
+        String sql = """
+            SELECT COALESCE(SUM(sp.duracao_segundos), 0)
+            FROM sessao_pomodoro sp
+            JOIN assunto a ON sp.assunto_id = a.id
+            WHERE a.disciplina_id = ? AND sp.tipo = 'FOCO'
+            """;
+        try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
+            ps.setInt(1, disciplinaId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    /**
      * Soma a duração total (em segundos) de todas as sessões de foco concluídas hoje pelo usuário.
      *
      * @param usuarioId identificador do usuário

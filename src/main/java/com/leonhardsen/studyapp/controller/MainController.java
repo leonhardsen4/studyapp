@@ -3,6 +3,7 @@ package com.leonhardsen.studyapp.controller;
 import com.leonhardsen.studyapp.StudyApplication;
 import com.leonhardsen.studyapp.database.DatabaseManager;
 import com.leonhardsen.studyapp.database.UsuarioDAO;
+import com.leonhardsen.studyapp.model.Assunto;
 import com.leonhardsen.studyapp.model.Evento;
 import com.leonhardsen.studyapp.model.ItemArvore;
 import com.leonhardsen.studyapp.model.Nota;
@@ -76,6 +77,7 @@ public class MainController {
     @FXML private Button     btnNavBlocoNotas;
     @FXML private Button     btnNavCalculadora;
     @FXML private Button     btnNavPomodoro;
+    @FXML private Button     btnNavPlanoEstudos;
     @FXML private SplitPane  splitPane;
     @FXML private VBox       painelArquivosContainer;
     @FXML private BorderPane painelTarefasContainer;
@@ -83,6 +85,7 @@ public class MainController {
     @FXML private BorderPane painelBlocoNotasContainer;
     @FXML private BorderPane painelCalculadoraContainer;
     @FXML private BorderPane painelPomodoroContainer;
+    @FXML private BorderPane painelPlanoEstudosContainer;
 
     // ── Painel de Arquivos ───────────────────────────────────────────────────
     @FXML private TreeView<ItemArvore> treeViewArquivos;
@@ -124,7 +127,8 @@ public class MainController {
     private AgendaController     agendaController;
     private BlocoNotasController blocoNotasController;
     private CalculadoraController calculadoraController;
-    private PomodoroController   pomodoroController;
+    private PomodoroController      pomodoroController;
+    private PlanoEstudosController  planoEstudosController;
 
     // ── Notificações ──────────────────────────────────────────────────────────
     @FXML private Button btnNotificacoes;
@@ -265,6 +269,8 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(false);
+        painelPlanoEstudosContainer.setManaged(false);
         painelArquivosContainer.setVisible(true);
         painelArquivosContainer.setManaged(true);
         btnNavArquivos.getStyleClass().add("btn-nav-ativo");
@@ -273,6 +279,7 @@ public class MainController {
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
         btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
         btnNavPomodoro.getStyleClass().remove("btn-nav-ativo");
+        btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
     }
 
     @FXML
@@ -302,6 +309,8 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(false);
+        painelPlanoEstudosContainer.setManaged(false);
         painelTarefasContainer.setVisible(true);
         painelTarefasContainer.setManaged(true);
         btnNavTarefas.getStyleClass().add("btn-nav-ativo");
@@ -310,6 +319,7 @@ public class MainController {
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
         btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
         btnNavPomodoro.getStyleClass().remove("btn-nav-ativo");
+        btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
     }
 
     @FXML
@@ -339,6 +349,8 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(false);
+        painelPlanoEstudosContainer.setManaged(false);
         painelAgendaContainer.setVisible(true);
         painelAgendaContainer.setManaged(true);
         btnNavAgenda.getStyleClass().add("btn-nav-ativo");
@@ -347,6 +359,7 @@ public class MainController {
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
         btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
         btnNavPomodoro.getStyleClass().remove("btn-nav-ativo");
+        btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
     }
 
     @FXML
@@ -374,6 +387,8 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(false);
+        painelPlanoEstudosContainer.setManaged(false);
         painelBlocoNotasContainer.setVisible(true);
         painelBlocoNotasContainer.setManaged(true);
         btnNavBlocoNotas.getStyleClass().add("btn-nav-ativo");
@@ -382,6 +397,7 @@ public class MainController {
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
         btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
         btnNavPomodoro.getStyleClass().remove("btn-nav-ativo");
+        btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
     }
 
     @FXML
@@ -409,6 +425,8 @@ public class MainController {
         painelBlocoNotasContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(false);
+        painelPlanoEstudosContainer.setManaged(false);
         painelCalculadoraContainer.setVisible(true);
         painelCalculadoraContainer.setManaged(true);
         btnNavCalculadora.getStyleClass().add("btn-nav-ativo");
@@ -417,6 +435,7 @@ public class MainController {
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
         btnNavPomodoro.getStyleClass().remove("btn-nav-ativo");
+        btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
     }
 
     @FXML
@@ -445,6 +464,8 @@ public class MainController {
         painelBlocoNotasContainer.setManaged(false);
         painelCalculadoraContainer.setVisible(false);
         painelCalculadoraContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(false);
+        painelPlanoEstudosContainer.setManaged(false);
         painelPomodoroContainer.setVisible(true);
         painelPomodoroContainer.setManaged(true);
         btnNavPomodoro.getStyleClass().add("btn-nav-ativo");
@@ -453,6 +474,60 @@ public class MainController {
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
         btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
+        btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
+    }
+
+    @FXML
+    private void handleNavPlanoEstudos() {
+        if (planoEstudosController == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                    StudyApplication.class.getResource("plano-estudos-view.fxml"));
+                javafx.scene.Node view = loader.load();
+                planoEstudosController = loader.getController();
+                planoEstudosController.setOnEstudarAssunto(this::navegarParaPomodoroComAssunto);
+                painelPlanoEstudosContainer.setCenter(view);
+            } catch (Exception ex) {
+                mostrarErro("Erro ao carregar Plano de Estudos: " + ex.getMessage());
+                return;
+            }
+        } else {
+            planoEstudosController.atualizarView();
+        }
+        painelArquivosContainer.setVisible(false);
+        painelArquivosContainer.setManaged(false);
+        painelTarefasContainer.setVisible(false);
+        painelTarefasContainer.setManaged(false);
+        painelAgendaContainer.setVisible(false);
+        painelAgendaContainer.setManaged(false);
+        painelBlocoNotasContainer.setVisible(false);
+        painelBlocoNotasContainer.setManaged(false);
+        painelCalculadoraContainer.setVisible(false);
+        painelCalculadoraContainer.setManaged(false);
+        painelPomodoroContainer.setVisible(false);
+        painelPomodoroContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(true);
+        painelPlanoEstudosContainer.setManaged(true);
+        btnNavPlanoEstudos.getStyleClass().add("btn-nav-ativo");
+        btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
+        btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
+        btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
+        btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
+        btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
+        btnNavPomodoro.getStyleClass().remove("btn-nav-ativo");
+    }
+
+    /**
+     * Navega para o Pomodoro pré-selecionando o assunto informado.
+     * Invocado como callback pelo {@link PlanoEstudosController}.
+     *
+     * @param assunto assunto a pré-selecionar no timer Pomodoro
+     */
+    private void navegarParaPomodoroComAssunto(Assunto assunto) {
+        handleNavPomodoro();
+        if (pomodoroController != null) {
+            pomodoroController.selecionarAssuntoExterno(assunto);
+        }
     }
 
     /**

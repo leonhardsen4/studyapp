@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.leonhardsen.studyapp.controller.PlanoEstudosController"
+            styleClass="plano-root">
+
+    <!-- ═══════════════ TOOLBAR ═══════════════ -->
+    <top>
+        <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
+            <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
+            <Label text="📚 Plano de Estudos" styleClass="module-titulo"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="+ Disciplina" styleClass="btn-action" onAction="#handleNovaDisciplina">
+                <tooltip><Tooltip text="Adicionar nova disciplina"/></tooltip>
+            </Button>
+            <Button fx:id="btnNovoAssunto" text="+ Assunto" styleClass="btn-action"
+                    disable="true" onAction="#handleNovoAssunto">
+                <tooltip><Tooltip text="Adicionar assunto à disciplina selecionada"/></tooltip>
+            </Button>
+        </HBox>
+    </top>
+
+    <!-- ═══════════════ CONTEÚDO ═══════════════ -->
+    <center>
+        <SplitPane dividerPositions="0.28" styleClass="plano-split">
+
+            <!-- ── Painel esquerdo: lista de disciplinas ── -->
+            <ScrollPane fitToWidth="true" styleClass="plano-sidebar" minWidth="200">
+                <VBox fx:id="listaDisciplinas" spacing="6" styleClass="plano-disc-lista">
+                    <padding><Insets top="10" right="8" bottom="10" left="8"/></padding>
+                </VBox>
+            </ScrollPane>
+
+            <!-- ── Painel direito: assuntos da disciplina ── -->
+            <BorderPane styleClass="plano-content">
+
+                <!-- Cabeçalho da disciplina selecionada -->
+                <top>
+                    <VBox fx:id="headerAssuntos" styleClass="plano-header" visible="false" managed="false">
+                        <padding><Insets top="14" right="16" bottom="12" left="16"/></padding>
+                        <Label fx:id="lblNomeDisciplina" styleClass="plano-disc-titulo"/>
+                        <Label fx:id="lblResumoDisc"    styleClass="plano-disc-resumo"/>
+                    </VBox>
+                </top>
+
+                <!-- Estado vazio (sem disciplina selecionada) -->
+                <center>
+                    <StackPane>
+                        <VBox fx:id="painelVazio" alignment="CENTER" spacing="12"
+                              styleClass="plano-vazio" visible="true" managed="true">
+                            <Label text="📚" style="-fx-font-size: 48px;"/>
+                            <Label text="Selecione uma disciplina" styleClass="plano-vazio-titulo"/>
+                            <Label text="ou crie uma nova usando '+ Disciplina'" styleClass="plano-vazio-hint"/>
+                        </VBox>
+
+                        <!-- Lista de assuntos -->
+                        <ScrollPane fx:id="scrollAssuntos" fitToWidth="true"
+                                    styleClass="plano-assuntos-scroll" visible="false" managed="false">
+                            <VBox fx:id="listaAssuntos" spacing="10" styleClass="plano-assuntos-lista">
+                                <padding><Insets top="14" right="16" bottom="16" left="16"/></padding>
+                            </VBox>
+                        </ScrollPane>
+                    </StackPane>
+                </center>
+
+            </BorderPane>
+        </SplitPane>
+    </center>
+
+</BorderPane>

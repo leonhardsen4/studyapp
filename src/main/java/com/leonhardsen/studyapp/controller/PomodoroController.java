@@ -932,6 +932,19 @@ public class PomodoroController {
         atualizarEstatsHoje();
     }
 
+    /**
+     * Seleciona um assunto externamente (ex.: a partir do Plano de Estudos) e
+     * expande a disciplina correspondente no painel, destacando o assunto no timer.
+     *
+     * @param assunto assunto a ser selecionado para o timer
+     */
+    public void selecionarAssuntoExterno(Assunto assunto) {
+        assuntoSelecionado = assunto;
+        expandidas.add(assunto.getDisciplinaId());
+        lblEstudando.setText("Estudando: " + assunto.getNome());
+        carregarDados();
+    }
+
     private void mostrarErro(String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setTitle("Erro");

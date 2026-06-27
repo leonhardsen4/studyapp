@@ -18,6 +18,7 @@
 | Temporizador Pomodoro     | ✅ Concluído  |
 | Bloco de notas rápido     | ✅ Concluído  |
 | Calculadora               | ✅ Concluído  |
+| Plano de Estudos          | ✅ Concluído  |
 
 ---
 
@@ -250,6 +251,52 @@ sessao_pomodoro (id, usuario_id, assunto_id, tipo, iniciado_em, concluido_em, du
 
 ---
 
+## ✅ Módulo 8 — Plano de Estudos
+
+**Status:** Concluído
+
+### O que foi implementado
+- **UI:** `PlanoEstudosController` + `plano-estudos-view.fxml` com layout SplitPane (sidebar esquerda 28% + painel direito 72%)
+- **Painel esquerdo (disciplinas):**
+  - Card por disciplina com barra de progresso (% assuntos concluídos), stats de sessões e tempo total de estudo
+  - Card da disciplina selecionada destacado com borda azul
+  - CRUD de disciplinas: criar (TextInputDialog), renomear, excluir (com confirmação e contagem de assuntos)
+- **Painel direito (assuntos):**
+  - Cabeçalho com nome da disciplina, contagem e tempo total
+  - Card por assunto com:
+    - Chips de status: ○ Pendente / ◑ Em Andamento / ✓ Concluído (cor por estado)
+    - Chips de dificuldade: Fácil / Médio / Difícil / Muito Difícil (cores distintas)
+    - Indicador de data limite com alertas visuais: vermelho (vencido), laranja (hoje), amarelo (≤ 3 dias)
+    - Barra de progresso de sessões Pomodoro com percentual e total de tempo de foco
+    - Botão "▶ Estudar agora" — navega para o Pomodoro e pré-seleciona o assunto
+    - Menu ⋯ com editar, marcar concluído/reabrir, excluir
+  - Estado vazio com instrução quando nenhuma disciplina está selecionada
+- **Diálogo de assunto:** disciplina (readonly ao editar), nome, dificuldade (auto-sugere sessões mínimas), spinner de sessões mínimas, DatePicker de data limite
+- **Integração com Pomodoro:**
+  - `PomodoroService` reutilizado integralmente (sem service novo)
+  - `SessaoPomodoroDAO.somarDuracaoPorAssunto()` e `somarDuracaoPorDisciplina()` (adicionados)
+  - `PomodoroController.selecionarAssuntoExterno(Assunto)` (adicionado) — expande a disciplina e sincroniza a referência após reload
+  - Callback `Consumer<Assunto> onEstudarAssunto` injetado pelo `MainController`
+  - `MainController.navegarParaPomodoroComAssunto()` — chama `handleNavPomodoro()` e depois `selecionarAssuntoExterno()`
+- **CSS:** prefixo `.plano-*` em ambos os temas (`.plano-root`, `.plano-disc-card`, `.plano-assunto-card`, `.plano-chip-*`, `.plano-progress-*`, `.plano-header`, `.plano-vazio`)
+- **Carregamento lazy** via `handleNavPlanoEstudos()` no MainController; `atualizarView()` recarrega dados ao renavigar
+- **Background threads** para todas as operações de banco; UI atualizada via `Platform.runLater()`
+- **Javadoc em português** em todos os métodos e campos públicos
+
+### Banco de dados
+Sem novas tabelas — reutiliza integralmente as tabelas existentes do Pomodoro:
+```
+disciplina      (id, usuario_id, nome, criado_em)
+assunto         (id, disciplina_id, nome, dificuldade, sessoes_minimas, sessoes_realizadas, status, data_limite, criado_em, atualizado_em)
+sessao_pomodoro (id, usuario_id, assunto_id, tipo, iniciado_em, concluido_em, duracao_segundos)
+```
+
+Novas queries adicionadas ao `SessaoPomodoroDAO`:
+- `somarDuracaoPorAssunto(int assuntoId)` — `SUM(duracao_segundos)` filtrado por assunto e tipo FOCO
+- `somarDuracaoPorDisciplina(int disciplinaId)` — JOIN com `assunto` para somar sessões de todos os assuntos da disciplina
+
+---
+
 ## Infraestrutura e arquitetura
 
 | Item                            | Status | Observação |
@@ -305,3 +352,4 @@ Todas as partes do sistema que apareciam com cores claras no modo escuro foram c
 | 24/jun/2026  | Módulo Pomodoro implementado completo: timer com ciclo automático, sistema de metas Disciplina → Assunto, painel esquerdo programático com botões [−][+][▶][⋯], vinculação sessão/assunto, persistência de configurações em `pomodoro.properties`, CSS em ambos os temas |
 | 24/jun/2026  | Documentação Javadoc adicionada em português a todos os 51 arquivos Java do projeto (model, DAO, service, controller, util, view) |
 | 25/jun/2026  | Botão "↗ Destacar" / "↙ Reintegrar" adicionado ao módulo Pomodoro: toolbar + conteúdo migram juntos para janela separada, igualando o comportamento da Calculadora e do Bloco de Notas |
+| 26/jun/2026  | Módulo Plano de Estudos implementado: disciplinas com barra de progresso e total de tempo, assuntos com chips de status/dificuldade, barra de sessões Pomodoro, data limite com alertas visuais, botão "Estudar agora" com integração ao Pomodoro, CRUD completo, CSS em ambos os temas, Javadoc em português |

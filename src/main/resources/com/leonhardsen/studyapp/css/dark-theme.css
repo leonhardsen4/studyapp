@@ -1615,3 +1615,91 @@
     -fx-background-color: #7A4E1A;
     -fx-effect: dropshadow(gaussian, rgba(90,58,20,0.8), 14, 0, 0, 4);
 }
+
+/* ══════════════════════════════════════════════════════
+   PLANO DE ESTUDOS (dark)
+   ══════════════════════════════════════════════════════ */
+
+.plano-root { -fx-background-color: #1A1C2A; }
+.plano-split { -fx-background-color: #1A1C2A; -fx-box-border: transparent; }
+.plano-split > .split-pane-divider { -fx-background-color: #2C304A; -fx-padding: 0 1 0 1; }
+
+/* Sidebar */
+.plano-sidebar { -fx-background-color: #1E2030; -fx-border-color: transparent; }
+.plano-sidebar > .viewport { -fx-background-color: transparent; }
+.plano-disc-lista { -fx-background-color: transparent; }
+.plano-sidebar-vazio { -fx-text-fill: #6070A0; -fx-font-size: 12px; }
+
+/* Card de disciplina */
+.plano-disc-card {
+    -fx-background-color: #252840;
+    -fx-background-radius: 10;
+    -fx-border-color: #2C304A;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 10 12 10 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 2);
+}
+.plano-disc-card:hover {
+    -fx-border-color: #4060A0;
+    -fx-background-color: #2A2E48;
+}
+.plano-disc-card-selecionado {
+    -fx-border-color: #4A7ADB;
+    -fx-background-color: #202848;
+    -fx-effect: dropshadow(gaussian, rgba(74,122,219,0.35), 8, 0, 0, 3);
+}
+.plano-disc-nome { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #C8D4F0; }
+.plano-disc-stats { -fx-font-size: 11px; -fx-text-fill: #6070A0; }
+
+/* Cabeçalho do painel direito */
+.plano-content { -fx-background-color: #1A1C2A; }
+.plano-header { -fx-background-color: #1E2238; -fx-border-color: #2C304A; -fx-border-width: 0 0 1 0; }
+.plano-disc-titulo { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #C8D4F0; }
+.plano-disc-resumo { -fx-font-size: 12px; -fx-text-fill: #6070A0; }
+
+/* Estado vazio */
+.plano-vazio { -fx-background-color: transparent; }
+.plano-vazio-titulo { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #5060A0; }
+.plano-vazio-hint   { -fx-font-size: 12px; -fx-text-fill: #40507A; }
+
+/* Lista e card de assunto */
+.plano-assuntos-scroll { -fx-background-color: transparent; -fx-border-color: transparent; }
+.plano-assuntos-scroll > .viewport { -fx-background-color: transparent; }
+.plano-assuntos-lista { -fx-background-color: transparent; }
+.plano-assunto-card {
+    -fx-background-color: #252840;
+    -fx-background-radius: 10;
+    -fx-border-color: #2C304A;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 2);
+}
+.plano-assunto-card:hover { -fx-border-color: #4060A0; }
+.plano-assunto-nome    { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #C8D4F0; }
+.plano-assunto-sessoes { -fx-font-size: 11px; -fx-text-fill: #5060A0; }
+
+/* Barra de progresso */
+.plano-progress-bar { -fx-pref-height: 8; -fx-background-radius: 4; }
+.plano-progress-bar > .track { -fx-background-color: #2A2E48; -fx-background-radius: 4; }
+.plano-progress-bar > .bar   { -fx-background-color: #4060A0; -fx-background-radius: 4; }
+.plano-progress-andamento > .bar { -fx-background-color: #3A7AD0; }
+.plano-progress-concluido  > .bar { -fx-background-color: #2E8040; }
+
+/* Chips */
+.plano-chip {
+    -fx-font-size: 11px;
+    -fx-background-radius: 10;
+    -fx-padding: 2 8 2 8;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+.plano-chip-pendente     { -fx-background-color: #20243A; -fx-text-fill: #6070A0; -fx-border-color: #2C304A; }
+.plano-chip-andamento    { -fx-background-color: #182040; -fx-text-fill: #5090E0; -fx-border-color: #283860; }
+.plano-chip-concluido    { -fx-background-color: #182818; -fx-text-fill: #50A050; -fx-border-color: #285028; }
+.plano-chip-facil        { -fx-background-color: #182818; -fx-text-fill: #50A050; -fx-border-color: #285028; }
+.plano-chip-medio        { -fx-background-color: #302010; -fx-text-fill: #D09030; -fx-border-color: #503A10; }
+.plano-chip-dificil      { -fx-background-color: #301808; -fx-text-fill: #E07040; -fx-border-color: #503020; }
+.plano-chip-muito-dificil{ -fx-background-color: #300818; -fx-text-fill: #E03060; -fx-border-color: #501028; }
