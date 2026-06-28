@@ -249,6 +249,67 @@ public class ItemArvoreDAO {
         item.setNome(rs.getString("nome"));
         item.setTipo(TipoItem.valueOf(rs.getString("tipo")));
         item.setPosicao(rs.getInt("posicao"));
+        item.setArquivado(rs.getInt("arquivado") == 1);
         return item;
+    }
+
+    /**
+     * Arquiva um caderno pelo seu identificador.
+     *
+     * @param itemId identificador do caderno
+     * @throws SQLException se ocorrer erro no banco de dados
+     */
+    public void arquivar(int itemId) throws SQLException {
+        String sql = "UPDATE item_arvore SET arquivado = 1 WHERE id = ?";
+        try (PreparedStatement stmt = dbManager.getConexao().prepareStatement(sql)) {
+            stmt.setInt(1, itemId);
+            stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Desarquiva um caderno pelo seu identificador.
+     *
+     * @param itemId identificador do caderno
+     * @throws SQLException se ocorrer erro no banco de dados
+     */
+    public void desarquivar(int itemId) throws SQLException {
+        String sql = "UPDATE item_arvore SET arquivado = 0 WHERE id = ?";
+        try (PreparedStatement stmt = dbManager.getConexao().prepareStatement(sql)) {
+            stmt.setInt(1, itemId);
+            stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Busca itens por nome ou conteúdo de nota, excluindo arquivados.
+     *
+     * @param usuarioId identificador do usuário
+     * @param texto     texto para busca (case-insensitive, parcial)
+     * @return lista de itens correspondentes
+     * @throws SQLException se ocorrer erro no banco de dados
+     */
+    public List<ItemArvore> buscarPorTexto(int usuarioId, String texto) throws SQLException {
+        String like = "%" + texto.toLowerCase() + "%";
+        String sql = """
+            SELECT ia.* FROM item_arvore ia
+            WHERE ia.usuario_id = ? AND LOWER(ia.nome) LIKE ? AND ia.arquivado = 0
+            UNION
+            SELECT ia.* FROM item_arvore ia
+            JOIN nota n ON n.item_id = ia.id
+            WHERE ia.usuario_id = ? AND LOWER(n.conteudo) LIKE ? AND ia.arquivado = 0
+            ORDER BY nome
+            """;
+        List<ItemArvore> itens = new ArrayList<>();
+        try (PreparedStatement stmt = dbManager.getConexao().prepareStatement(sql)) {
+            stmt.setInt(1, usuarioId);
+            stmt.setString(2, like);
+            stmt.setInt(3, usuarioId);
+            stmt.setString(4, like);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) itens.add(mapearItem(rs));
+            }
+        }
+        return itens;
     }
 }

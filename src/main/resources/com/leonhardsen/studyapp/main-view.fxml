@@ -136,9 +136,21 @@
 
                 <Separator/>
 
-                <!-- Árvore de arquivos -->
-                <TreeView fx:id="treeViewArquivos" VBox.vgrow="ALWAYS" styleClass="file-tree"
-                          onMouseClicked="#handleSelecaoTree"/>
+                <!-- Campo de busca -->
+                <TextField fx:id="campoBuscaArquivos" promptText="🔍 Pesquisar..." styleClass="file-search-field"/>
+
+                <!-- Árvore de arquivos / resultados de busca -->
+                <StackPane VBox.vgrow="ALWAYS">
+                    <TreeView fx:id="treeViewArquivos" styleClass="file-tree"
+                              onMouseClicked="#handleSelecaoTree"/>
+                    <ListView fx:id="listaBuscaArquivos" visible="false" managed="false" styleClass="file-search-results"/>
+                </StackPane>
+
+                <!-- Rodapé com toggle de arquivados -->
+                <HBox styleClass="file-panel-footer" alignment="CENTER_LEFT">
+                    <Button fx:id="btnVerArquivados" text="📦 Ver arquivados" styleClass="file-arquivo-toggle"
+                            onAction="#handleVerArquivados"/>
+                </HBox>
             </VBox>
 
             <!-- ── Área de Conteúdo (direita) ── -->
@@ -222,12 +234,13 @@
                     <!-- Controles do PDF -->
                     <HBox styleClass="pdf-toolbar" alignment="CENTER" spacing="12">
                         <Button text="◀" onAction="#handlePdfAnterior" styleClass="btn-action"/>
-                        <Label fx:id="labelPdfPagina" text="Página 1 de 1" styleClass="topbar-info"/>
+                        <Label fx:id="labelPdfPagina" text="Página 1 de 1" styleClass="pdf-info-label"/>
                         <Button text="▶" onAction="#handlePdfProxima" styleClass="btn-action"/>
                         <Separator orientation="VERTICAL"/>
                         <Button text="−" onAction="#handlePdfZoomMenos" styleClass="btn-action"/>
-                        <Label fx:id="labelPdfZoom" text="100%" styleClass="topbar-info"/>
+                        <Label fx:id="labelPdfZoom" text="100%" styleClass="pdf-info-label"/>
                         <Button text="+" onAction="#handlePdfZoomMais" styleClass="btn-action"/>
+                        <Button text="⬛ Ajustar" onAction="#handlePdfAjustarPagina" styleClass="btn-action"/>
                     </HBox>
                     <ScrollPane fx:id="scrollPdf" VBox.vgrow="ALWAYS" fitToWidth="true" styleClass="pdf-scroll">
                         <StackPane>

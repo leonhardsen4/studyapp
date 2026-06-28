@@ -16,6 +16,7 @@ public class ItemArvore {
     private String nome;
     private TipoItem tipo;
     private int posicao;
+    private boolean arquivado;
 
     /**
      * Construtor padrão sem argumentos.
@@ -148,6 +149,24 @@ public class ItemArvore {
      */
     public void setPosicao(int posicao) {
         this.posicao = posicao;
+    }
+
+    /**
+     * Retorna se o item está arquivado.
+     *
+     * @return {@code true} se o item estiver arquivado
+     */
+    public boolean isArquivado() {
+        return arquivado;
+    }
+
+    /**
+     * Define se o item está arquivado.
+     *
+     * @param arquivado {@code true} para arquivar o item
+     */
+    public void setArquivado(boolean arquivado) {
+        this.arquivado = arquivado;
     }
 
     @Override

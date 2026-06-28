@@ -46,6 +46,7 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.*;
 
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -89,6 +90,9 @@ public class MainController {
 
     // ── Painel de Arquivos ───────────────────────────────────────────────────
     @FXML private TreeView<ItemArvore> treeViewArquivos;
+    @FXML private TextField campoBuscaArquivos;
+    @FXML private ListView<ItemArvore> listaBuscaArquivos;
+    @FXML private Button btnVerArquivados;
     @FXML private Button btnSubirItem;
     @FXML private Button btnDescerItem;
     @FXML private Button btnExcluirItem;
@@ -121,6 +125,7 @@ public class MainController {
     private PauseTransition pausaAutoSave;
     private ItemArvore itemAtual;
     private boolean emModoVisualizacao = false;
+    private boolean mostrandoArquivados = false;
 
     // ── Carregamento lazy dos módulos ─────────────────────────────────────────
     private TarefasController    tarefasController;
@@ -145,6 +150,7 @@ public class MainController {
     private PDFRenderer renderizadorPdf;
     private int paginaPdfAtual = 0;
     private float zoomPdf = 1.0f;
+    private final AtomicInteger renderizacoesAtivas = new AtomicInteger(0);
 
     /** Parser e renderer Flexmark para Markdown. */
     private final Parser parserMarkdown;
@@ -217,8 +223,23 @@ public class MainController {
         ContextMenu menu = new ContextMenu();
 
         String temaAtual = ThemeManager.getInstance().getTemaAtual();
-        MenuItem itemTema = new MenuItem("CLARO".equals(temaAtual) ? "🌙  Modo Escuro" : "☀  Modo Claro");
-        itemTema.setOnAction(e -> handleAlternarTema());
+        MenuItem itemClaro  = new MenuItem("☀  Modo Claro");
+        MenuItem itemEscuro = new MenuItem("🌙  Modo Escuro");
+        MenuItem itemLudico = new MenuItem("🎨  Modo Lúdico");
+        itemClaro.setDisable("CLARO".equals(temaAtual));
+        itemEscuro.setDisable("ESCURO".equals(temaAtual));
+        itemLudico.setDisable("LUDICO".equals(temaAtual));
+        itemClaro.setOnAction(e  -> handleDefinirTema("CLARO"));
+        itemEscuro.setOnAction(e -> handleDefinirTema("ESCURO"));
+        itemLudico.setOnAction(e -> handleDefinirTema("LUDICO"));
+
+        double escala = ThemeManager.getInstance().getEscalaFonte();
+        MenuItem itemFonteMais  = new MenuItem("A+  Aumentar fonte");
+        MenuItem itemFonteMenos = new MenuItem("A−  Reduzir fonte");
+        itemFonteMais.setDisable(escala >= 1.25 - 0.001);
+        itemFonteMenos.setDisable(escala <= 0.85 + 0.001);
+        itemFonteMais.setOnAction(e  -> ThemeManager.getInstance().aumentarFonte());
+        itemFonteMenos.setOnAction(e -> ThemeManager.getInstance().reduzirFonte());
 
         MenuItem itemPerfil = new MenuItem("👤  Perfil");
         itemPerfil.setOnAction(e -> handleAbrirPerfil());
@@ -232,21 +253,29 @@ public class MainController {
         MenuItem itemSair = new MenuItem("✕  Sair do Aplicativo");
         itemSair.setOnAction(e -> handleSair());
 
-        menu.getItems().addAll(itemPerfil, itemTema, itemEmail, new SeparatorMenuItem(), itemLogout, itemSair);
+        menu.getItems().addAll(
+            itemClaro, itemEscuro, itemLudico,
+            new SeparatorMenuItem(),
+            itemFonteMais, itemFonteMenos,
+            new SeparatorMenuItem(),
+            itemPerfil, itemEmail,
+            new SeparatorMenuItem(),
+            itemLogout, itemSair
+        );
         menu.show(btnConfiguracoes, javafx.geometry.Side.BOTTOM, 0, 0);
     }
 
     /**
-     * Alterna entre os temas claro e escuro e salva a preferência no banco de dados.
+     * Define o tema especificado e persiste a preferência no banco de dados.
      */
-    private void handleAlternarTema() {
-        String novoTema = ThemeManager.getInstance().alternarTema();
+    private void handleDefinirTema(String tema) {
+        ThemeManager.getInstance().aplicarTema(tema);
         var usuario = SessionManager.getInstance().getUsuarioLogado();
         if (usuario != null) {
             new Thread(() -> {
                 try {
-                    usuarioService.atualizarTema(usuario.getId(), novoTema);
-                    usuario.setTema(novoTema);
+                    usuarioService.atualizarTema(usuario.getId(), tema);
+                    usuario.setTema(tema);
                 } catch (Exception ex) {
                     Platform.runLater(() -> mostrarErro("Erro ao salvar tema: " + ex.getMessage()));
                 }
@@ -866,6 +895,8 @@ public class MainController {
             celula.setOnSubir(() -> handleSubir(celula.getItem()));
             celula.setOnDescer(() -> handleDescer(celula.getItem()));
             celula.setOnImprimir(() -> handleImprimir(celula.getItem()));
+            celula.setOnArquivar(() -> handleArquivar(celula.getItem()));
+            celula.setOnDesarquivar(() -> handleDesarquivar(celula.getItem()));
             return celula;
         });
 
@@ -882,6 +913,33 @@ public class MainController {
                 default -> {}
             }
         });
+
+        campoBuscaArquivos.textProperty().addListener((obs, old, novo) -> {
+            if (novo == null || novo.isBlank()) {
+                listaBuscaArquivos.setVisible(false);
+                listaBuscaArquivos.setManaged(false);
+                treeViewArquivos.setVisible(true);
+                treeViewArquivos.setManaged(true);
+            } else {
+                pesquisarArquivos(novo.trim());
+            }
+        });
+
+        listaBuscaArquivos.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(ItemArvore item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) { setText(null); }
+                else {
+                    String icone = switch (item.getTipo()) {
+                        case CADERNO -> "📁"; case NOTA -> "📄"; case PDF -> "📃";
+                    };
+                    setText(icone + "  " + item.getNome());
+                }
+            }
+        });
+        listaBuscaArquivos.getSelectionModel().selectedItemProperty().addListener(
+            (obs, old, novo) -> { if (novo != null) abrirItem(novo); });
     }
 
     /**
@@ -908,10 +966,13 @@ public class MainController {
         treeViewArquivos.getRoot().getChildren().clear();
         Map<Integer, TreeItem<ItemArvore>> mapa = new LinkedHashMap<>();
         for (ItemArvore item : itens) {
-            mapa.put(item.getId(), new TreeItem<>(item));
+            if (!item.isArquivado() || mostrandoArquivados) {
+                mapa.put(item.getId(), new TreeItem<>(item));
+            }
         }
         for (ItemArvore item : itens) {
             TreeItem<ItemArvore> treeItem = mapa.get(item.getId());
+            if (treeItem == null) continue;
             if (item.getPaiId() == null) {
                 treeViewArquivos.getRoot().getChildren().add(treeItem);
             } else {
@@ -1348,6 +1409,74 @@ public class MainController {
             } catch (Exception ex) {
                 Platform.runLater(() -> mostrarErro("Erro ao reordenar: " + ex.getMessage()));
             }
+        }).start();
+    }
+
+    /**
+     * Alterna a exibição de cadernos arquivados na árvore de arquivos.
+     */
+    @FXML
+    private void handleVerArquivados() {
+        mostrandoArquivados = !mostrandoArquivados;
+        btnVerArquivados.setText(mostrandoArquivados ? "📬 Ocultar arquivados" : "📦 Ver arquivados");
+        carregarArvore();
+    }
+
+    /**
+     * Arquiva o caderno selecionado, ocultando-o e todo o seu conteúdo da árvore.
+     *
+     * @param item caderno a ser arquivado
+     */
+    private void handleArquivar(ItemArvore item) {
+        if (item == null || item.getTipo() != TipoItem.CADERNO) return;
+        new Thread(() -> {
+            try {
+                arquivoService.arquivar(item.getId());
+                Platform.runLater(() -> {
+                    if (itemAtual != null && itemAtual.getId() == item.getId()) mostrarPainelVazio();
+                    carregarArvore();
+                });
+            } catch (Exception ex) {
+                Platform.runLater(() -> mostrarErro("Erro ao arquivar: " + ex.getMessage()));
+            }
+        }).start();
+    }
+
+    /**
+     * Desarquiva o caderno selecionado, tornando-o e seu conteúdo visíveis novamente.
+     *
+     * @param item caderno a ser desarquivado
+     */
+    private void handleDesarquivar(ItemArvore item) {
+        if (item == null) return;
+        new Thread(() -> {
+            try {
+                arquivoService.desarquivar(item.getId());
+                Platform.runLater(this::carregarArvore);
+            } catch (Exception ex) {
+                Platform.runLater(() -> mostrarErro("Erro ao desarquivar: " + ex.getMessage()));
+            }
+        }).start();
+    }
+
+    /**
+     * Pesquisa itens pelo nome ou conteúdo e exibe os resultados na lista de busca.
+     *
+     * @param texto texto parcial para busca
+     */
+    private void pesquisarArquivos(String texto) {
+        int usuarioId = SessionManager.getInstance().getUsuarioLogado().getId();
+        new Thread(() -> {
+            try {
+                List<ItemArvore> resultados = arquivoService.buscarPorTexto(usuarioId, texto);
+                Platform.runLater(() -> {
+                    listaBuscaArquivos.getItems().setAll(resultados);
+                    listaBuscaArquivos.setVisible(true);
+                    listaBuscaArquivos.setManaged(true);
+                    treeViewArquivos.setVisible(false);
+                    treeViewArquivos.setManaged(false);
+                });
+            } catch (Exception ignored) {}
         }).start();
     }
 
@@ -1817,17 +1946,19 @@ public class MainController {
      */
     private void renderizarPaginaPdf() {
         if (renderizadorPdf == null) return;
-        // Captura local para evitar que fecharPdfAtual() anule os campos durante a renderização
         PDFRenderer renderer = renderizadorPdf;
         int pagina = paginaPdfAtual;
         float dpi = 150 * zoomPdf;
+        renderizacoesAtivas.incrementAndGet();
         new Thread(() -> {
             try {
                 BufferedImage bi = renderer.renderImageWithDPI(pagina, dpi);
                 Image fxImage = bufferedImageParaFxImage(bi);
                 Platform.runLater(() -> imagePdf.setImage(fxImage));
             } catch (Exception ex) {
-                // Ignora silenciosamente: pode ocorrer ao fechar o PDF durante a renderização
+                // Ignora: pode ocorrer em race condition residual
+            } finally {
+                renderizacoesAtivas.decrementAndGet();
             }
         }).start();
     }
@@ -1891,6 +2022,27 @@ public class MainController {
     }
 
     /**
+     * Ajusta o zoom do PDF para que a página caiba na largura do painel de visualização.
+     */
+    @FXML
+    private void handlePdfAjustarPagina() {
+        if (documentoPdfAberto == null) return;
+        try {
+            org.apache.pdfbox.pdmodel.common.PDRectangle box =
+                documentoPdfAberto.getPage(paginaPdfAtual).getMediaBox();
+            double larguraPagPt = box.getWidth();
+            double larguraViewport = scrollPdf.getViewportBounds().getWidth();
+            if (larguraViewport <= 0) larguraViewport = scrollPdf.getWidth() - 20;
+            if (larguraViewport > 0 && larguraPagPt > 0) {
+                double dpiAlvo = larguraViewport / (larguraPagPt / 72.0);
+                zoomPdf = (float) Math.max(0.5, Math.min(5.0, dpiAlvo / 150.0));
+                renderizarPaginaPdf();
+                atualizarInfoPdf(documentoPdfAberto.getNumberOfPages());
+            }
+        } catch (Exception ignored) {}
+    }
+
+    /**
      * Fecha o documento PDF aberto e libera os recursos de memória.
      * O fechamento do arquivo ocorre em background após 300ms para que threads de renderização
      * em andamento possam concluir sem gerar erros de "already closed" no PDFBox.
@@ -1901,7 +2053,11 @@ public class MainController {
             renderizadorPdf = null;
             documentoPdfAberto = null;
             new Thread(() -> {
-                try { Thread.sleep(300); } catch (InterruptedException ignored) {}
+                // Aguarda todas as threads de renderização concluírem antes de fechar o documento
+                int tentativas = 0;
+                while (renderizacoesAtivas.get() > 0 && tentativas++ < 150) {
+                    try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+                }
                 try { docAFechar.close(); } catch (IOException ignored) {}
             }).start();
         }

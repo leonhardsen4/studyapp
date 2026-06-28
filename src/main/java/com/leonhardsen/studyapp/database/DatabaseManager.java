@@ -253,6 +253,9 @@ public class DatabaseManager {
         try (Statement stmt = conexao.createStatement()) {
             stmt.execute("ALTER TABLE disciplina ADD COLUMN arquivado INTEGER NOT NULL DEFAULT 0");
         } catch (SQLException ignored) { /* coluna já existe — ignorar */ }
+        try (Statement stmt = conexao.createStatement()) {
+            stmt.execute("ALTER TABLE item_arvore ADD COLUMN arquivado INTEGER NOT NULL DEFAULT 0");
+        } catch (SQLException ignored) { /* coluna já existe — ignorar */ }
     }
 
     /**

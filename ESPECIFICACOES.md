@@ -261,15 +261,29 @@ CREATE TABLE pdf_documento (
 | + Nota     | Abre diálogo de criação (requer caderno selecionado ou existente)   |
 | + PDF      | Abre file chooser, copia o arquivo e insere no caderno selecionado  |
 
+#### Campo de busca
+- `TextField` acima da `TreeView`; ao digitar, a `TreeView` é substituída por uma `ListView` de resultados.
+- Pesquisa por **nome** do item OU **conteúdo** de nota (UNION SQL), sem distinção de maiúsculas.
+- Ao limpar o campo, a `TreeView` é restaurada.
+- Itens arquivados são excluídos dos resultados de busca.
+
+#### Arquivamento de cadernos
+- **Arquivar** oculta o caderno e todo o seu conteúdo da `TreeView` (sem excluir dados).
+- **Desarquivar** torna o caderno visível novamente.
+- Botão "📦 Ver arquivados" no rodapé do painel alterna a exibição de cadernos arquivados.
+- Implementação: coluna `arquivado INTEGER DEFAULT 0` na tabela `item_arvore`; `construirArvore()` exclui do mapa os itens arquivados (subárvores desaparecem naturalmente).
+
 #### Menu de contexto (clique direito)
-| Opção             | Disponível para        |
-|-------------------|------------------------|
-| Renomear          | Caderno, Nota, PDF     |
-| Excluir           | Caderno, Nota, PDF     |
-| Novo caderno aqui | Caderno                |
-| Nova nota aqui    | Caderno                |
-| Adicionar PDF     | Caderno                |
-| Mover para…       | Caderno, Nota, PDF     |
+| Opção                   | Disponível para        |
+|-------------------------|------------------------|
+| Renomear                | Caderno, Nota, PDF     |
+| Excluir                 | Caderno, Nota, PDF     |
+| Novo caderno aqui       | Caderno                |
+| Nova nota aqui          | Caderno                |
+| Adicionar PDF           | Caderno                |
+| Mover para…             | Caderno, Nota, PDF     |
+| 📦 Arquivar             | Caderno (não arquivado)|
+| 📬 Desarquivar          | Caderno (arquivado)    |
 
 #### Mover itens
 - **Arrastar e soltar** (drag & drop) dentro do `TreeView`.
@@ -331,8 +345,10 @@ Biblioteca de renderizacao Markdown: **`com.vladsch.flexmark:flexmark-all`**
 ### 6.5 Visualizador de PDF
 
 - PDFBox renderiza cada página como `BufferedImage` → `ImageView` em `ScrollPane` vertical.
-- Controles: `◀ Anterior` / `▶ Próxima`, campo de número de página, botões de zoom (+/−).
+- Controles: `◀ Anterior` / `▶ Próxima`, campo de número de página, botões de zoom (+/−), botão "⬛ Ajustar".
+- **Ajustar à página:** calcula o DPI necessário para que a largura da página caiba na viewport do `ScrollPane` e ajusta `zoomPdf` automaticamente.
 - Renderização sob demanda: apenas a página visível é processada para evitar lentidão em arquivos grandes.
+- **Rótulos de navegação** (página atual e zoom) usam `styleClass="pdf-info-label"` para garantir visibilidade adequada em todos os temas.
 
 ---
 

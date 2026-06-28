@@ -867,7 +867,7 @@
     -fx-background-color: #252538;
     -fx-border-color: transparent;
     -fx-font-family: "Monospace";
-    -fx-font-size: 15px;
+    -fx-font-size: 22px;
     -fx-text-fill: #E8E8F0;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -876,7 +876,7 @@
     -fx-background-color: #252538;
 }
 .calc-resultado {
-    -fx-font-size: 18px;
+    -fx-font-size: 32px;
     -fx-font-weight: bold;
     -fx-text-fill: #7AABFF;
 }
@@ -1868,3 +1868,23 @@
 .pomo-timer-panel {
     -fx-background-color: transparent;
 }
+
+/* PDF info labels (página, zoom) */
+.pdf-info-label { -fx-text-fill: #B0C0E0; -fx-font-size: 12px; }
+
+/* Sistema de arquivos — busca e arquivados */
+.file-search-field {
+    -fx-background-color: #252538; -fx-border-color: #3A3A58;
+    -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1;
+    -fx-padding: 5 8 5 8; -fx-font-size: 12px;
+    -fx-text-fill: #E8E8F0; -fx-prompt-text-fill: #6060A0;
+}
+.file-search-field:focused { -fx-border-color: #5080D0; }
+.file-search-results { -fx-background-color: #1A1C2E; -fx-border-color: transparent; }
+.file-search-results .list-cell { -fx-text-fill: #E8E8F0; -fx-font-size: 12px; -fx-padding: 5 10 5 10; -fx-background-color: transparent; }
+.file-search-results .list-cell:hover { -fx-background-color: #2A2C42; }
+.file-search-results .list-cell:selected { -fx-background-color: #3A4060; }
+.file-panel-footer { -fx-background-color: #1A1C2E; -fx-border-color: #2A2C42; -fx-border-width: 1 0 0 0; -fx-padding: 4 6 4 6; }
+.file-arquivo-toggle { -fx-background-color: transparent; -fx-text-fill: #8090B0; -fx-font-size: 11px; -fx-background-radius: 6; -fx-border-color: transparent; -fx-padding: 4 6 4 6; -fx-cursor: hand; }
+.file-arquivo-toggle:hover { -fx-background-color: #2A2C42; }
+.file-tree-cell-arquivado { -fx-opacity: 0.55; }

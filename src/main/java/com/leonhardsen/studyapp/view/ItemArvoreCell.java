@@ -24,6 +24,8 @@ public class ItemArvoreCell extends TreeCell<ItemArvore> {
     private Runnable onSubir;
     private Runnable onDescer;
     private Runnable onImprimir;
+    private Runnable onArquivar;
+    private Runnable onDesarquivar;
 
     /**
      * Construtor padrão sem argumentos.
@@ -45,9 +47,17 @@ public class ItemArvoreCell extends TreeCell<ItemArvore> {
             setText(null);
             setGraphic(null);
             setContextMenu(null);
+            getStyleClass().remove("file-tree-cell-arquivado");
         } else {
             setText(icone(item.getTipo()) + "  " + item.getNome());
             setContextMenu(criarMenuContexto(item));
+            if (item.isArquivado()) {
+                if (!getStyleClass().contains("file-tree-cell-arquivado")) {
+                    getStyleClass().add("file-tree-cell-arquivado");
+                }
+            } else {
+                getStyleClass().remove("file-tree-cell-arquivado");
+            }
         }
     }
 
@@ -79,13 +89,21 @@ public class ItemArvoreCell extends TreeCell<ItemArvore> {
             MenuItem iNovoCaderno = new MenuItem("Novo Caderno aqui");
             MenuItem iNovaNota = new MenuItem("Nova Nota aqui");
             MenuItem iNovoPdf = new MenuItem("Adicionar PDF");
+            MenuItem iArquivarDesarquivar = item.isArquivado()
+                ? new MenuItem("📬  Desarquivar")
+                : new MenuItem("📦  Arquivar");
             MenuItem separador = new SeparatorMenuItem();
 
             iNovoCaderno.setOnAction(e -> { if (onNovoCaderno != null) onNovoCaderno.run(); });
             iNovaNota.setOnAction(e -> { if (onNovaNota != null) onNovaNota.run(); });
             iNovoPdf.setOnAction(e -> { if (onNovoPdf != null) onNovoPdf.run(); });
+            if (item.isArquivado()) {
+                iArquivarDesarquivar.setOnAction(e -> { if (onDesarquivar != null) onDesarquivar.run(); });
+            } else {
+                iArquivarDesarquivar.setOnAction(e -> { if (onArquivar != null) onArquivar.run(); });
+            }
 
-            menu.getItems().addAll(iNovoCaderno, iNovaNota, iNovoPdf, separador);
+            menu.getItems().addAll(iNovoCaderno, iNovaNota, iNovoPdf, separador, iArquivarDesarquivar, new SeparatorMenuItem());
         }
 
         MenuItem iSubir = new MenuItem("↑ Subir");
@@ -179,4 +197,18 @@ public class ItemArvoreCell extends TreeCell<ItemArvore> {
      * @param onImprimir ação a executar
      */
     public void setOnImprimir(Runnable onImprimir) { this.onImprimir = onImprimir; }
+
+    /**
+     * Define o callback chamado ao solicitar arquivamento do caderno.
+     *
+     * @param onArquivar ação a executar
+     */
+    public void setOnArquivar(Runnable onArquivar) { this.onArquivar = onArquivar; }
+
+    /**
+     * Define o callback chamado ao solicitar desarquivamento do caderno.
+     *
+     * @param onDesarquivar ação a executar
+     */
+    public void setOnDesarquivar(Runnable onDesarquivar) { this.onDesarquivar = onDesarquivar; }
 }

@@ -227,4 +227,37 @@ public class ArquivoService {
     public PdfDocumento buscarPdf(int itemId) throws SQLException {
         return pdfDAO.buscarPorItemId(itemId);
     }
+
+    /**
+     * Arquiva um caderno (e seu conteúdo) ocultando-o da árvore de arquivos.
+     *
+     * @param itemId identificador do caderno a ser arquivado
+     * @throws SQLException se ocorrer erro no banco de dados
+     */
+    public void arquivar(int itemId) throws SQLException {
+        itemDAO.arquivar(itemId);
+    }
+
+    /**
+     * Desarquiva um caderno, tornando-o visível novamente na árvore de arquivos.
+     *
+     * @param itemId identificador do caderno a ser desarquivado
+     * @throws SQLException se ocorrer erro no banco de dados
+     */
+    public void desarquivar(int itemId) throws SQLException {
+        itemDAO.desarquivar(itemId);
+    }
+
+    /**
+     * Busca itens da árvore cujo nome ou conteúdo de nota corresponda ao texto informado.
+     * Itens arquivados são excluídos dos resultados.
+     *
+     * @param usuarioId identificador do usuário
+     * @param texto     texto de busca (parcial, sem distinção de maiúsculas)
+     * @return lista de itens correspondentes ordenados por nome
+     * @throws SQLException se ocorrer erro no banco de dados
+     */
+    public List<ItemArvore> buscarPorTexto(int usuarioId, String texto) throws SQLException {
+        return itemDAO.buscarPorTexto(usuarioId, texto);
+    }
 }
