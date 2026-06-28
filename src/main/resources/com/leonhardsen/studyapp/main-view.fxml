@@ -94,7 +94,7 @@
                 <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
                 <Label text="📁 Arquivos" styleClass="module-titulo"/>
             </HBox>
-            <SplitPane fx:id="splitPane" dividerPositions="0.22" VBox.vgrow="ALWAYS">
+            <SplitPane fx:id="splitPane" dividerPositions="0.30" VBox.vgrow="ALWAYS">
 
             <!-- ── Painel de Arquivos (esquerda) ── -->
             <VBox styleClass="file-panel" minWidth="180">
