@@ -1299,4 +1299,91 @@
     -fx-padding: 5 14 5 14;
     -fx-cursor: hand;
 }
+
+/* ── Plano de Estudos — novos elementos (busca, arquivadas, histórico) ── */
+
+/* Sidebar com busca */
+.plano-sidebar-panel { -fx-background-color: #F0F2F8; }
+.plano-busca-bar {
+    -fx-background-color: #E8EBF4;
+    -fx-border-color: #D0D6E8;
+    -fx-border-width: 0 0 1 0;
+}
+.plano-busca-field {
+    -fx-background-color: white;
+    -fx-border-color: #C0CADF;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 5 8 5 8;
+    -fx-font-size: 12px;
+    -fx-prompt-text-fill: #9090A8;
+}
+.plano-busca-field:focused {
+    -fx-border-color: #3A7AD0;
+}
+
+/* Rodapé da sidebar */
+.plano-sidebar-footer {
+    -fx-background-color: #E8EBF4;
+    -fx-border-color: #D0D6E8;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* Botão "Ver arquivadas" */
+.plano-arquivo-toggle {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6070A0;
+    -fx-font-size: 11px;
+    -fx-background-radius: 6;
+    -fx-border-color: transparent;
+    -fx-padding: 5 8 5 8;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+.plano-arquivo-toggle:hover { -fx-background-color: #D8DCEC; }
+
+/* Card de disciplina arquivada */
+.plano-disc-card-arquivada {
+    -fx-opacity: 0.72;
+    -fx-border-color: #C8CCDC;
+    -fx-background-color: #ECEEF6;
+}
+.plano-disc-card-arquivada .plano-disc-nome { -fx-text-fill: #7080A0; }
+
+/* Histórico de sessões */
+.plano-hist-scroll { -fx-background-color: transparent; -fx-border-color: transparent; }
+.plano-hist-scroll > .viewport { -fx-background-color: transparent; }
+.plano-hist-total {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1B3A6B;
+}
+.plano-hist-row {
+    -fx-padding: 6 8 6 8;
+    -fx-background-color: #F4F6FC;
+    -fx-background-radius: 6;
+    -fx-border-color: #E0E4F0;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+.plano-hist-row:hover { -fx-background-color: #EBEEf8; }
+.plano-hist-data    { -fx-font-size: 12px; -fx-text-fill: #3A4A70; }
+.plano-hist-duracao { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1B3A6B; }
+.plano-hist-assunto { -fx-font-size: 12px; -fx-text-fill: #6070A0; }
 .dash-atalho-btn:hover { -fx-background-color: #EAF0FB; -fx-border-color: #6B8ED8; }
+
+/* Timer Pomodoro incorporado ao Plano de Estudos */
+.plano-timer-raiz {
+    -fx-background-color: #F0F2F8;
+    -fx-border-color: #D0D6E8;
+    -fx-border-width: 0 0 0 1;
+}
+.plano-timer-estudando {
+    -fx-font-size: 12px;
+    -fx-text-fill: #3A4A70;
+    -fx-font-style: italic;
+}
+.pomo-timer-panel {
+    -fx-background-color: transparent;
+}

@@ -428,10 +428,8 @@ Construído programaticamente (`VBox listaDisciplinas`) com colunas expansíveis
 └─────────────────────┴────────────────────────────────────┘
 ```
 
-- Layout `BorderPane` externo (`container`) + `BorderPane` interno (`raiz`) + `SplitPane` dividerPositions=0.30.
-- Painel esquerdo: `VBox` + `ScrollPane` (lista de disciplinas/assuntos).
-- Painel direito: timer centralizado com botões de controle.
-- **Botão "↗ Destacar"** na toolbar: move `raiz` (toolbar + SplitPane) para uma `Stage` separada sempre no topo; `container` exibe placeholder. O botão passa a exibir "↙ Reintegrar" na janela destacada. Fechar a janela ou clicar em "↙ Reintegrar" devolve tudo ao painel principal — padrão idêntico ao da Calculadora e do Bloco de Notas.
+- **A partir de 28/jun/2026, o timer Pomodoro foi incorporado ao Plano de Estudos** (ver 7.7). O módulo independente "🍅 Pomodoro" e o botão de navegação correspondente foram removidos; a lógica de timer foi extraída para `PomodoroTimerController` + `pomodoro-timer-view.fxml`.
+- O timer aparece como terceiro painel do `SplitPane` do Plano de Estudos ao clicar em "▶ Estudar agora". Pode ser destacado em janela flutuante (↗) e reintegrado (↙) — padrão idêntico ao da Calculadora e do Bloco de Notas.
 
 #### 7.3.6 Banco de dados
 
@@ -482,7 +480,7 @@ CREATE TABLE sessao_pomodoro (
 | `database/AssuntoDAO`       | DAO        | CRUD + buscarPorId + buscarPorDisciplina                               |
 | `database/SessaoPomodoroDAO`| DAO        | registrar + contarSessoesHoje + somarDuracaoHoje                       |
 | `service/PomodoroService`   | Service    | Lógica de negócio; coordena DAOs; regras de status do assunto          |
-| `controller/PomodoroController` | Controller | Timer (`Timeline` 1s), painel esquerdo, navegação, persistência de configurações |
+| `controller/PomodoroTimerController` | Controller | Timer (`Timeline` 1s), integração ao SplitPane do Plano de Estudos, persistência de configurações |
 
 #### 7.3.8 CSS
 
@@ -513,8 +511,15 @@ Estilos próprios do módulo em ambos os temas:
 - Hierarquia Disciplina → Assunto com progresso de sessões Pomodoro.
 - Sidebar com cards de disciplina (barra de progresso % assuntos concluídos, total de tempo de foco).
 - Painel direito com cards de assunto: chips de status/dificuldade, data limite com alertas visuais, barra de sessões (realizadas/mínimas), botão "▶ Estudar agora".
-- Integração direta com o Pomodoro: `PomodoroController.selecionarAssuntoExterno()` pré-seleciona o assunto ao clicar em "Estudar agora".
+- **Timer Pomodoro integrado:** ao clicar em "▶ Estudar agora", o timer (`pomodoro-timer-view.fxml` / `PomodoroTimerController`) é carregado lazily e adicionado como terceiro painel do `SplitPane` (divisores: 20% sidebar / 56% assuntos / 44% timer). O botão "✕ Encerrar" remove o timer do painel; o botão "↗" destaca o timer em janela flutuante. O callback `onSessaoConcluida` recarrega os dados do plano após cada sessão de foco. `MainController.estudarAssuntoNoPlano()` navega para o módulo e chama `estudarAssunto()`.
 - Sem novas tabelas — reutiliza `disciplina`, `assunto` e `sessao_pomodoro`.
+
+**Funcionalidades adicionais:**
+
+- **Barra de pesquisa** na sidebar: filtra disciplinas cujo nome OU o nome de algum assunto corresponda ao termo; painel direito filtra assuntos de forma correspondente; botão ✕ limpa a busca.
+- **Arquivamento de disciplinas:** opção "Arquivar" no menu ⋯ da disciplina; disciplina arquivada deixa de aparecer na lista principal. Botão "📦 Ver arquivadas" no rodapé da sidebar alterna a exibição da seção de arquivadas (com destaque visual diferenciado). Discipline arquivadas podem ser desarquivadas ou excluídas via menu ⋯.
+- **Histórico de sessões:** opção "📊 Histórico" disponível no menu ⋯ tanto de assuntos quanto de disciplinas. Abre um diálogo com a lista completa de sessões de foco (data, hora e duração), total acumulado no cabeçalho. No modo disciplina, exibe também o nome do assunto por sessão.
+- **Migração de esquema:** coluna `arquivado INTEGER DEFAULT 0` adicionada à tabela `disciplina` via `migrarTabelas()` em `DatabaseManager` (idempotente, usa try-catch em `ALTER TABLE`).
 
 ---
 

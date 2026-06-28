@@ -41,13 +41,9 @@
                         onAction="#handleNavCalculadora">
                     <tooltip><Tooltip text="Calculadora científica"/></tooltip>
                 </Button>
-                <Button fx:id="btnNavPomodoro" text="🍅 Pomodoro" styleClass="btn-nav"
-                        onAction="#handleNavPomodoro">
-                    <tooltip><Tooltip text="Timer Pomodoro e metas de estudo"/></tooltip>
-                </Button>
                 <Button fx:id="btnNavPlanoEstudos" text="📚 Plano" styleClass="btn-nav"
                         onAction="#handleNavPlanoEstudos">
-                    <tooltip><Tooltip text="Plano de estudos — disciplinas, assuntos e progresso"/></tooltip>
+                    <tooltip><Tooltip text="Plano de estudos com timer Pomodoro integrado"/></tooltip>
                 </Button>
             </HBox>
 
@@ -88,9 +84,6 @@
 
         <!-- Container da calculadora (oculto por padrão) -->
         <BorderPane fx:id="painelCalculadoraContainer" visible="false" managed="false"/>
-
-        <!-- Container do Pomodoro (oculto por padrão) -->
-        <BorderPane fx:id="painelPomodoroContainer" visible="false" managed="false"/>
 
         <!-- Container do Plano de Estudos (oculto por padrão) -->
         <BorderPane fx:id="painelPlanoEstudosContainer" visible="false" managed="false"/>

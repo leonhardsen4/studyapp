@@ -310,28 +310,38 @@ sessao_pomodoro (id, usuario_id, assunto_id, tipo, iniciado_em, concluido_em, du
     - Menu ⋯ com editar, marcar concluído/reabrir, excluir
   - Estado vazio com instrução quando nenhuma disciplina está selecionada
 - **Diálogo de assunto:** disciplina (readonly ao editar), nome, dificuldade (auto-sugere sessões mínimas), spinner de sessões mínimas, DatePicker de data limite
-- **Integração com Pomodoro:**
+- **Integração com Pomodoro (após merge de 28/jun/2026):**
   - `PomodoroService` reutilizado integralmente (sem service novo)
   - `SessaoPomodoroDAO.somarDuracaoPorAssunto()` e `somarDuracaoPorDisciplina()` (adicionados)
-  - `PomodoroController.selecionarAssuntoExterno(Assunto)` (adicionado) — expande a disciplina e sincroniza a referência após reload
-  - Callback `Consumer<Assunto> onEstudarAssunto` injetado pelo `MainController`
-  - `MainController.navegarParaPomodoroComAssunto()` — chama `handleNavPomodoro()` e depois `selecionarAssuntoExterno()`
+  - `PomodoroTimerController.selecionarAssunto(Assunto)` — define o assunto ativo e atualiza label
+  - Timer adicionado/removido programaticamente do `SplitPane` via `mostrarPainelTimer()` / `ocultarPainelTimer()`
+  - `MainController.estudarAssuntoNoPlano()` — navega ao Plano e chama `estudarAssunto()`
+  - Callback `onSessaoConcluida` notifica o `PlanoEstudosController` para recarregar dados
 - **CSS:** prefixo `.plano-*` em ambos os temas (`.plano-root`, `.plano-disc-card`, `.plano-assunto-card`, `.plano-chip-*`, `.plano-progress-*`, `.plano-header`, `.plano-vazio`)
 - **Carregamento lazy** via `handleNavPlanoEstudos()` no MainController; `atualizarView()` recarrega dados ao renavigar
 - **Background threads** para todas as operações de banco; UI atualizada via `Platform.runLater()`
 - **Javadoc em português** em todos os métodos e campos públicos
 
+### Funcionalidades adicionadas em 28/jun/2026
+- **Barra de pesquisa** — `TextField campoBusca` com listener em tempo real; `filtrarDisciplinas()` inclui disciplina se nome OU nome de algum assunto corresponder; painel direito também filtra assuntos. Botão ✕ limpa a busca.
+- **Arquivamento de disciplinas** — menu ⋯ → "📦 Arquivar"; `DisciplinaDAO.arquivar/desarquivar()` + `migrarTabelas()` para coluna `arquivado`; botão toggle no rodapé da sidebar; cards arquivados com opacidade e cor diferenciados; opção de desarquivar pelo menu ⋯.
+- **Histórico de sessões** — `SessaoPomodoroDAO.buscarHistoricoPorAssunto()` e `buscarHistoricoPorDisciplina()`; diálogo `exibirDialogoHistorico()` com cabeçalho de total, linhas `🍅 data/hora • duração [• assunto]`; modo disciplina inclui coluna de nome do assunto.
+- **Timer Pomodoro integrado (merge)** — `PomodoroTimerController` + `pomodoro-timer-view.fxml` incorporados ao SplitPane do Plano de Estudos; loader lazy via `carregarTimerSeNecessario()`; callbacks `onEncerrar` / `onSessaoConcluida`; botão "✕ Encerrar" remove o painel; destaque em janela flutuante mantido.
+
 ### Banco de dados
-Sem novas tabelas — reutiliza integralmente as tabelas existentes do Pomodoro:
+Sem novas tabelas — reutiliza integralmente as tabelas existentes do Pomodoro.
+Migração aplicada: coluna `arquivado INTEGER NOT NULL DEFAULT 0` adicionada à tabela `disciplina` via `DatabaseManager.migrarTabelas()` (idempotente).
 ```
-disciplina      (id, usuario_id, nome, criado_em)
+disciplina      (id, usuario_id, nome, criado_em, arquivado)
 assunto         (id, disciplina_id, nome, dificuldade, sessoes_minimas, sessoes_realizadas, status, data_limite, criado_em, atualizado_em)
 sessao_pomodoro (id, usuario_id, assunto_id, tipo, iniciado_em, concluido_em, duracao_segundos)
 ```
 
-Novas queries adicionadas ao `SessaoPomodoroDAO`:
-- `somarDuracaoPorAssunto(int assuntoId)` — `SUM(duracao_segundos)` filtrado por assunto e tipo FOCO
-- `somarDuracaoPorDisciplina(int disciplinaId)` — JOIN com `assunto` para somar sessões de todos os assuntos da disciplina
+Queries adicionadas ao `SessaoPomodoroDAO`:
+- `somarDuracaoPorAssunto(int assuntoId)` — `SUM(duracao_segundos)` por assunto e tipo FOCO
+- `somarDuracaoPorDisciplina(int disciplinaId)` — JOIN `assunto` para somar toda a disciplina
+- `buscarHistoricoPorAssunto(int assuntoId)` — retorna `[concluido_em, duracao_segundos]` DESC
+- `buscarHistoricoPorDisciplina(int disciplinaId)` — retorna `[concluido_em, duracao_segundos, assunto_nome]` DESC
 
 ---
 
@@ -392,3 +402,5 @@ Todas as partes do sistema que apareciam com cores claras no modo escuro foram c
 | 25/jun/2026  | Botão "↗ Destacar" / "↙ Reintegrar" adicionado ao módulo Pomodoro: toolbar + conteúdo migram juntos para janela separada, igualando o comportamento da Calculadora e do Bloco de Notas |
 | 28/jun/2026  | Módulo Dashboard implementado: tela inicial com saudação contextual, 4 cards de resumo (Pomodoro/Tarefas/Agenda/Plano), seções de tarefas urgentes, eventos de hoje, progresso do plano e sessões recentes; botão "🏠 Início" na topbar; modo claro e escuro; Javadoc em português |
 | 26/jun/2026  | Módulo Plano de Estudos implementado: disciplinas com barra de progresso e total de tempo, assuntos com chips de status/dificuldade, barra de sessões Pomodoro, data limite com alertas visuais, botão "Estudar agora" com integração ao Pomodoro, CRUD completo, CSS em ambos os temas, Javadoc em português |
+| 28/jun/2026  | Melhorias no Plano de Estudos: (1) barra de pesquisa na sidebar filtra disciplinas e assuntos por nome em tempo real; (2) arquivamento de disciplinas — menu ⋯ > "Arquivar", toggle "📦 Ver arquivadas" no rodapé da sidebar, colspan visual diferenciado, opção de desarquivar; (3) histórico de sessões — diálogo "📊 Histórico" por assunto (data/hora + duração) e por disciplina (idem + nome do assunto), total acumulado no cabeçalho. Migração de esquema: coluna `arquivado` na tabela `disciplina` via `migrarTabelas()`. CSS em ambos os temas (busca, arquivadas, histórico). Javadoc em português em todos os métodos novos. |
+| 28/jun/2026  | Merge Pomodoro + Plano de Estudos: o botão "🍅 Pomodoro" foi removido da topbar; `PomodoroController` e `pomodoro-view.fxml` foram excluídos. O timer foi extraído para `PomodoroTimerController` + `pomodoro-timer-view.fxml` (sem painel de disciplinas). Ao clicar em "▶ Estudar agora", o timer é carregado lazily e inserido como terceiro painel do `SplitPane` do Plano de Estudos; o botão "✕ Encerrar" o remove. O callback `onSessaoConcluida` recarrega os dados do Plano após cada sessão. O destaque em janela flutuante (↗/↙) permanece funcional. `MainController` atualizado: `estudarAssuntoNoPlano()` substitui `navegarParaPomodoroComAssunto()`; `pararRecursos()` delega para `planoEstudosController.pararTimer()`. CSS novo: `.plano-timer-raiz`, `.plano-timer-estudando`. Javadoc em português em todos os métodos. |
