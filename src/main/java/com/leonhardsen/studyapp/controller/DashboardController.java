@@ -1,6 +1,7 @@
 package com.leonhardsen.studyapp.controller;
 
 import com.leonhardsen.studyapp.model.*;
+import com.leonhardsen.studyapp.service.ArquivoService;
 import com.leonhardsen.studyapp.service.EventoService;
 import com.leonhardsen.studyapp.service.PomodoroService;
 import com.leonhardsen.studyapp.service.TarefaService;
@@ -33,6 +34,7 @@ public class DashboardController {
     private final PomodoroService pomodoroService = new PomodoroService();
     private final TarefaService   tarefaService   = new TarefaService();
     private final EventoService   eventoService   = new EventoService();
+    private final ArquivoService  arquivoService  = new ArquivoService();
 
     // ── Callbacks de navegação ────────────────────────────────────────────────
     /** Navega para o módulo de Tarefas. */
@@ -41,6 +43,14 @@ public class DashboardController {
     private Runnable onVerAgenda;
     /** Navega para o módulo de Plano de Estudos. */
     private Runnable onVerPlanoEstudos;
+    /** Navega para o módulo de Arquivos. */
+    private Runnable onVerArquivos;
+    /** Navega para o módulo Pomodoro. */
+    private Runnable onVerPomodoro;
+    /** Navega para o Bloco de Notas. */
+    private Runnable onVerBlocoNotas;
+    /** Navega para a Calculadora. */
+    private Runnable onVerCalculadora;
     /** Navega para o Pomodoro pré-selecionando o assunto informado. */
     private Consumer<Assunto> onEstudarAssunto;
 
@@ -52,12 +62,15 @@ public class DashboardController {
     private record DashData(
         int sessoesHoje,
         int segundosHoje,
-        List<Tarefa>              tarefasUrgentes,
-        List<Evento>              eventosHoje,
-        List<Disciplina>          disciplinas,
+        List<Tarefa>                tarefasUrgentes,
+        List<Evento>                eventosHoje,
+        List<Disciplina>            disciplinas,
         Map<Integer, List<Assunto>> assuntosPorDisc,
-        Map<Integer, Integer>     duracoesPorDisc,
-        List<String[]>            sessoesRecentes
+        Map<Integer, Integer>       duracoesPorDisc,
+        List<String[]>              sessoesRecentes,
+        long                        numCadernos,
+        long                        numNotas,
+        long                        numPdfs
     ) {}
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -109,6 +122,34 @@ public class DashboardController {
     public void setOnVerPlanoEstudos(Runnable cb)    { this.onVerPlanoEstudos = cb; }
 
     /**
+     * Define o callback invocado ao clicar no card de Arquivos.
+     *
+     * @param cb runnable que navega para o módulo de Arquivos
+     */
+    public void setOnVerArquivos(Runnable cb)        { this.onVerArquivos     = cb; }
+
+    /**
+     * Define o callback invocado ao clicar no card do Pomodoro.
+     *
+     * @param cb runnable que navega para o módulo Pomodoro
+     */
+    public void setOnVerPomodoro(Runnable cb)        { this.onVerPomodoro     = cb; }
+
+    /**
+     * Define o callback invocado ao clicar no botão de acesso rápido ao Bloco de Notas.
+     *
+     * @param cb runnable que navega para o Bloco de Notas
+     */
+    public void setOnVerBlocoNotas(Runnable cb)      { this.onVerBlocoNotas   = cb; }
+
+    /**
+     * Define o callback invocado ao clicar no botão de acesso rápido à Calculadora.
+     *
+     * @param cb runnable que navega para a Calculadora
+     */
+    public void setOnVerCalculadora(Runnable cb)     { this.onVerCalculadora  = cb; }
+
+    /**
      * Define o callback invocado ao clicar em "▶ Estudar" em uma disciplina.
      *
      * @param cb consumidor que recebe o assunto pré-selecionado e navega para o Pomodoro
@@ -144,11 +185,17 @@ public class DashboardController {
 
                 List<String[]> sessoesRecentes = pomodoroService.buscarResumoSessoesRecentes(uid, 5);
 
+                List<ItemArvore> todosItens = arquivoService.buscarTodos(uid);
+                long numCadernos = todosItens.stream().filter(i -> i.getTipo() == TipoItem.CADERNO).count();
+                long numNotas    = todosItens.stream().filter(i -> i.getTipo() == TipoItem.NOTA).count();
+                long numPdfs     = todosItens.stream().filter(i -> i.getTipo() == TipoItem.PDF).count();
+
                 DashData data = new DashData(
                     sessoesHoje, segundosHoje,
                     tarefasUrgentes, eventosHoje,
                     disciplinas, assuntosPorDisc, duracoesPorDisc,
-                    sessoesRecentes
+                    sessoesRecentes,
+                    numCadernos, numNotas, numPdfs
                 );
 
                 Platform.runLater(() -> construirUI(data));
@@ -182,6 +229,7 @@ public class DashboardController {
         conteudo.getChildren().clear();
 
         conteudo.getChildren().add(criarSaudacao());
+        conteudo.getChildren().add(criarAcessoRapido());
         conteudo.getChildren().add(criarCardsResumo(data));
 
         if (!data.tarefasUrgentes().isEmpty()) {
@@ -229,30 +277,46 @@ public class DashboardController {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // ACESSO RÁPIDO
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Constrói a linha de botões de acesso rápido ao Bloco de Notas e à Calculadora.
+     *
+     * @return {@link HBox} com os botões de atalho
+     */
+    private HBox criarAcessoRapido() {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        Label lbl = new Label("Acesso rápido:");
+        lbl.getStyleClass().add("dash-atalho-label");
+
+        Button btnNotas = new Button("📝  Bloco de Notas");
+        btnNotas.getStyleClass().add("dash-atalho-btn");
+        if (onVerBlocoNotas != null) btnNotas.setOnAction(e -> onVerBlocoNotas.run());
+
+        Button btnCalc = new Button("🧮  Calculadora");
+        btnCalc.getStyleClass().add("dash-atalho-btn");
+        if (onVerCalculadora != null) btnCalc.setOnAction(e -> onVerCalculadora.run());
+
+        row.getChildren().addAll(lbl, btnNotas, btnCalc);
+        return row;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // SEÇÃO: CARDS DE RESUMO
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Constrói a linha de cards de resumo (Pomodoro, Tarefas, Eventos, Plano).
+     * Constrói a linha de cards de resumo (Tarefas, Agenda, Arquivos, Plano de Estudos, Pomodoro).
      *
      * @param data dados carregados
-     * @return {@link FlowPane} com os quatro cards
+     * @return {@link FlowPane} com os cards
      */
     private FlowPane criarCardsResumo(DashData data) {
         FlowPane flow = new FlowPane(12, 12);
         flow.setAlignment(Pos.TOP_LEFT);
-
-        // Card Pomodoro
-        int  h = data.segundosHoje() / 3600;
-        int  m = (data.segundosHoje() % 3600) / 60;
-        String tempoHoje = data.segundosHoje() == 0 ? "0 min"
-                : h > 0 ? h + "h " + m + "min" : m + " min";
-        flow.getChildren().add(criarCard(
-            "🍅", "Pomodoro hoje",
-            data.sessoesHoje() + " sessão(ões)",
-            tempoHoje,
-            null
-        ));
 
         // Card Tarefas
         long vencidas = data.tarefasUrgentes().stream()
@@ -266,13 +330,22 @@ public class DashboardController {
         ));
 
         // Card Eventos
-        String subEvento = data.eventosHoje().isEmpty() ? "nenhum evento" :
-            data.eventosHoje().get(0).getTitulo();
+        String subEvento = data.eventosHoje().isEmpty() ? "nenhum evento"
+            : data.eventosHoje().get(0).getTitulo();
         flow.getChildren().add(criarCard(
             "📅", "Agenda hoje",
             data.eventosHoje().size() + " evento(s)",
             subEvento,
             onVerAgenda
+        ));
+
+        // Card Arquivos
+        long totalArquivos = data.numNotas() + data.numPdfs();
+        flow.getChildren().add(criarCard(
+            "📁", "Sistema de Arquivos",
+            data.numCadernos() + " caderno(s)",
+            totalArquivos + " arquivo(s)  (" + data.numNotas() + " notas · " + data.numPdfs() + " PDFs)",
+            onVerArquivos
         ));
 
         // Card Plano de Estudos
@@ -285,6 +358,18 @@ public class DashboardController {
             concluidosTotal + "/" + totalAssuntos + " assuntos",
             data.disciplinas().size() + " disciplina(s)",
             onVerPlanoEstudos
+        ));
+
+        // Card Pomodoro (ao lado do Plano de Estudos)
+        int h = data.segundosHoje() / 3600;
+        int m = (data.segundosHoje() % 3600) / 60;
+        String tempoHoje = data.segundosHoje() == 0 ? "0 min"
+            : h > 0 ? h + "h " + m + "min" : m + " min";
+        flow.getChildren().add(criarCard(
+            "🍅", "Pomodoro hoje",
+            data.sessoesHoje() + " sessão(ões)",
+            tempoHoje,
+            onVerPomodoro
         ));
 
         return flow;

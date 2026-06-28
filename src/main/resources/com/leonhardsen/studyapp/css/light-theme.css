@@ -1285,3 +1285,18 @@
 /* Sessões recentes */
 .dash-sessao-data    { -fx-font-size: 11px; -fx-text-fill: #8090B0; }
 .dash-sessao-duracao { -fx-font-size: 11px; -fx-text-fill: #1B3A6B; -fx-font-weight: bold; }
+
+/* Acesso rápido */
+.dash-atalho-label { -fx-font-size: 12px; -fx-text-fill: #8090B0; }
+.dash-atalho-btn {
+    -fx-background-color: white;
+    -fx-text-fill: #1B3A6B;
+    -fx-font-size: 12px;
+    -fx-background-radius: 20;
+    -fx-border-color: #C0CADF;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-padding: 5 14 5 14;
+    -fx-cursor: hand;
+}
+.dash-atalho-btn:hover { -fx-background-color: #EAF0FB; -fx-border-color: #6B8ED8; }

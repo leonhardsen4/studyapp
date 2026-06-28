@@ -509,6 +509,10 @@ public class MainController {
                 dashboardController = loader.getController();
                 dashboardController.setOnVerTarefas(this::handleNavTarefas);
                 dashboardController.setOnVerAgenda(this::handleNavAgenda);
+                dashboardController.setOnVerArquivos(this::handleNavArquivos);
+                dashboardController.setOnVerPomodoro(this::handleNavPomodoro);
+                dashboardController.setOnVerBlocoNotas(this::handleNavBlocoNotas);
+                dashboardController.setOnVerCalculadora(this::handleNavCalculadora);
                 dashboardController.setOnVerPlanoEstudos(this::handleNavPlanoEstudos);
                 dashboardController.setOnEstudarAssunto(this::navegarParaPomodoroComAssunto);
                 painelDashboardContainer.setCenter(view);
