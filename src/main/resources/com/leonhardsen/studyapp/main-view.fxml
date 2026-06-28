@@ -17,7 +17,11 @@
 
             <!-- Botões de navegação entre funcionalidades -->
             <HBox spacing="4" alignment="CENTER">
-                <Button fx:id="btnNavArquivos" text="📁 Arquivos" styleClass="btn-nav, btn-nav-ativo"
+                <Button fx:id="btnNavDashboard" text="🏠 Início" styleClass="btn-nav"
+                        onAction="#handleNavDashboard">
+                    <tooltip><Tooltip text="Dashboard — visão geral do dia"/></tooltip>
+                </Button>
+                <Button fx:id="btnNavArquivos" text="📁 Arquivos" styleClass="btn-nav"
                         onAction="#handleNavArquivos">
                     <tooltip><Tooltip text="Gerenciador de arquivos e notas"/></tooltip>
                 </Button>
@@ -70,6 +74,9 @@
     <center>
         <StackPane fx:id="stackCentral">
 
+        <!-- Container do Dashboard (oculto por padrão — exibido via initialize()) -->
+        <BorderPane fx:id="painelDashboardContainer" visible="false" managed="false"/>
+
         <!-- Container de tarefas (oculto por padrão) -->
         <BorderPane fx:id="painelTarefasContainer" visible="false" managed="false"/>
 
@@ -88,8 +95,8 @@
         <!-- Container do Plano de Estudos (oculto por padrão) -->
         <BorderPane fx:id="painelPlanoEstudosContainer" visible="false" managed="false"/>
 
-        <!-- Container do sistema de arquivos -->
-        <VBox fx:id="painelArquivosContainer">
+        <!-- Container do sistema de arquivos (oculto por padrão) -->
+        <VBox fx:id="painelArquivosContainer" visible="false" managed="false">
             <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
                 <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
                 <Label text="📁 Arquivos" styleClass="module-titulo"/>

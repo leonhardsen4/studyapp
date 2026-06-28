@@ -19,6 +19,7 @@
 | Bloco de notas rápido     | ✅ Concluído  |
 | Calculadora               | ✅ Concluído  |
 | Plano de Estudos          | ✅ Concluído  |
+| Dashboard                 | ✅ Concluído  |
 
 ---
 
@@ -251,6 +252,43 @@ sessao_pomodoro (id, usuario_id, assunto_id, tipo, iniciado_em, concluido_em, du
 
 ---
 
+## ✅ Módulo 9 — Dashboard
+
+**Status:** Concluído
+
+### O que foi implementado
+- **UI:** `DashboardController` + `dashboard-view.fxml` — tela inicial exibida logo após o login
+- **Saudação contextual:** "Bom dia/Boa tarde/Boa noite, [primeiro nome]!" com a data longa no padrão pt-BR
+- **4 cards de resumo** (linha responsiva com `FlowPane`):
+  - 🍅 Sessões de foco hoje (contagem + tempo total)
+  - ✓ Tarefas urgentes (vencidas + próximas 3 dias, contagem)
+  - 📅 Eventos hoje (contagem + nome do primeiro evento)
+  - 📚 Progresso do Plano (assuntos concluídos / total + disciplinas)
+  - Cards clicáveis navegam diretamente para o módulo correspondente
+- **Seção Tarefas urgentes:** lista com ícone de alerta, badge de prazo (Vencida/Hoje/Em Nd) e botão "→ Ver"
+- **Seção Eventos de hoje:** lista com horário e botão "→ Ver"
+- **Seção Plano de Estudos:** disciplinas com barra de progresso e botão "▶ Estudar" que abre o Pomodoro com o primeiro assunto não-concluído
+- **Seção Sessões recentes:** últimas 5 sessões FOCO com disciplina·assunto, data relativa (hoje/ontem) e duração
+- **Botão ↻ Atualizar** na toolbar recarrega todos os dados
+- **Navegação cruzada:** callbacks `onVerTarefas`, `onVerAgenda`, `onVerPlanoEstudos`, `onEstudarAssunto` injetados por `MainController`
+- **Tela inicial:** `MainController.initialize()` chama `handleNavDashboard()` ao fazer login; `painelArquivosContainer` oculto por padrão
+- **Dados carregados em background** via thread + `Platform.runLater()`; `DashData` (record Java 17) agrega todos os resultados
+- **CSS:** prefixo `.dash-*` em ambos os temas; cards com borda e sombra sutil; seções com fundo branco/escuro e separador
+- **Javadoc em português** em todos os métodos públicos e privados
+
+### Arquivos novos / modificados (além de docs)
+| Arquivo | Alteração |
+|---|---|
+| `controller/DashboardController.java` | Novo |
+| `dashboard-view.fxml` | Novo |
+| `database/SessaoPomodoroDAO.java` | `buscarResumoRecentes()` adicionado |
+| `service/PomodoroService.java` | `buscarResumoSessoesRecentes()` adicionado |
+| `controller/MainController.java` | `dashboardController`, `handleNavDashboard()`, callbacks, default navigation |
+| `main-view.fxml` | Botão 🏠 Início + container Dashboard |
+| `light-theme.css` / `dark-theme.css` | Seção `.dash-*` |
+
+---
+
 ## ✅ Módulo 8 — Plano de Estudos
 
 **Status:** Concluído
@@ -352,4 +390,5 @@ Todas as partes do sistema que apareciam com cores claras no modo escuro foram c
 | 24/jun/2026  | Módulo Pomodoro implementado completo: timer com ciclo automático, sistema de metas Disciplina → Assunto, painel esquerdo programático com botões [−][+][▶][⋯], vinculação sessão/assunto, persistência de configurações em `pomodoro.properties`, CSS em ambos os temas |
 | 24/jun/2026  | Documentação Javadoc adicionada em português a todos os 51 arquivos Java do projeto (model, DAO, service, controller, util, view) |
 | 25/jun/2026  | Botão "↗ Destacar" / "↙ Reintegrar" adicionado ao módulo Pomodoro: toolbar + conteúdo migram juntos para janela separada, igualando o comportamento da Calculadora e do Bloco de Notas |
+| 28/jun/2026  | Módulo Dashboard implementado: tela inicial com saudação contextual, 4 cards de resumo (Pomodoro/Tarefas/Agenda/Plano), seções de tarefas urgentes, eventos de hoje, progresso do plano e sessões recentes; botão "🏠 Início" na topbar; modo claro e escuro; Javadoc em português |
 | 26/jun/2026  | Módulo Plano de Estudos implementado: disciplinas com barra de progresso e total de tempo, assuntos com chips de status/dificuldade, barra de sessões Pomodoro, data limite com alertas visuais, botão "Estudar agora" com integração ao Pomodoro, CRUD completo, CSS em ambos os temas, Javadoc em português |

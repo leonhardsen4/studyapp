@@ -287,4 +287,18 @@ public class PomodoroService {
     public int somarDuracaoPorDisciplina(int disciplinaId) throws SQLException {
         return sessaoDAO.somarDuracaoPorDisciplina(disciplinaId);
     }
+
+    /**
+     * Retorna um resumo das últimas sessões de foco do usuário, com assunto e disciplina vinculados.
+     * Cada elemento é um array {@code [duracao_segundos, concluido_em, assunto_nome, disciplina_nome]};
+     * {@code assunto_nome} e {@code disciplina_nome} podem ser {@code null}.
+     *
+     * @param usuarioId identificador do usuário
+     * @param limite    número máximo de sessões a retornar
+     * @return lista de arrays, da mais recente para a mais antiga
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public List<String[]> buscarResumoSessoesRecentes(int usuarioId, int limite) throws SQLException {
+        return sessaoDAO.buscarResumoRecentes(usuarioId, limite);
+    }
 }

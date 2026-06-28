@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.leonhardsen.studyapp.controller.DashboardController"
+            styleClass="dash-root">
+
+    <!-- ═══════════════ TOOLBAR ═══════════════ -->
+    <top>
+        <HBox styleClass="module-toolbar" alignment="CENTER_LEFT" spacing="8">
+            <padding><Insets top="7" right="12" bottom="7" left="12"/></padding>
+            <Label text="🏠 Dashboard" styleClass="module-titulo"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="↻  Atualizar" styleClass="btn-action" onAction="#handleAtualizar">
+                <tooltip><Tooltip text="Recarregar todos os dados do Dashboard"/></tooltip>
+            </Button>
+        </HBox>
+    </top>
+
+    <!-- ═══════════════ CONTEÚDO ═══════════════ -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="dash-scroll" pannable="false">
+            <VBox fx:id="conteudo" spacing="24" styleClass="dash-conteudo">
+                <padding><Insets top="24" right="28" bottom="28" left="28"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

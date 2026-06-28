@@ -1703,3 +1703,67 @@
 .plano-chip-medio        { -fx-background-color: #302010; -fx-text-fill: #D09030; -fx-border-color: #503A10; }
 .plano-chip-dificil      { -fx-background-color: #301808; -fx-text-fill: #E07040; -fx-border-color: #503020; }
 .plano-chip-muito-dificil{ -fx-background-color: #300818; -fx-text-fill: #E03060; -fx-border-color: #501028; }
+
+/* ══════════════════════════════════════════════════════
+   DASHBOARD (dark)
+   ══════════════════════════════════════════════════════ */
+
+.dash-root    { -fx-background-color: #1A1C2A; }
+.dash-scroll  { -fx-background-color: transparent; -fx-border-color: transparent; }
+.dash-scroll > .viewport { -fx-background-color: transparent; }
+.dash-conteudo { -fx-background-color: transparent; }
+
+/* Saudação */
+.dash-saudacao   { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #C8D4F0; }
+.dash-data-label { -fx-font-size: 13px; -fx-text-fill: #6070A0; }
+.dash-carregando { -fx-font-size: 14px; -fx-text-fill: #6070A0; -fx-font-style: italic; }
+
+/* Cards de resumo */
+.dash-card {
+    -fx-background-color: #252840;
+    -fx-background-radius: 12;
+    -fx-border-color: #2C304A;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 2);
+}
+.dash-card-clicavel { -fx-cursor: hand; }
+.dash-card-clicavel:hover { -fx-border-color: #4060A0; -fx-background-color: #2A2E48; }
+.dash-card-icone  { -fx-font-size: 16px; }
+.dash-card-titulo { -fx-font-size: 11px; -fx-text-fill: #6070A0; -fx-font-weight: bold; }
+.dash-card-valor  { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #C8D4F0; }
+.dash-card-sub    { -fx-font-size: 11px; -fx-text-fill: #5060A0; }
+
+/* Seções */
+.dash-secao        { -fx-background-color: #252840; -fx-background-radius: 12; -fx-border-color: #2C304A;
+                     -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 16;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 4, 0, 0, 2); }
+.dash-secao-titulo { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #8090C0; }
+.dash-sep          { -fx-background-color: #2C304A; -fx-padding: 0 0 1 0; }
+
+/* Linhas de lista */
+.dash-lista-row    { -fx-padding: 4 0 4 0; }
+.dash-lista-titulo { -fx-font-size: 13px; -fx-text-fill: #C8D4F0; }
+
+/* Badges de prazo */
+.dash-badge-vencida { -fx-font-size: 11px; -fx-text-fill: #E05050; -fx-font-weight: bold; }
+.dash-badge-hoje    { -fx-font-size: 11px; -fx-text-fill: #D09040; -fx-font-weight: bold; }
+.dash-badge-breve   { -fx-font-size: 11px; -fx-text-fill: #6070A0; }
+
+/* Eventos */
+.dash-evento-hora { -fx-font-size: 12px; -fx-text-fill: #6070A0; }
+
+/* Plano de estudos (dashboard) */
+.dash-plano-row    { -fx-padding: 4 0 4 0; }
+.dash-plano-nome   { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #C8D4F0; }
+.dash-plano-stats  { -fx-font-size: 11px; -fx-text-fill: #5060A0; }
+.dash-plano-bar    { -fx-pref-height: 7; -fx-background-radius: 4; }
+.dash-plano-bar > .track { -fx-background-color: #2A2E48; -fx-background-radius: 4; }
+.dash-plano-bar > .bar   { -fx-background-color: #4060A0; -fx-background-radius: 4; }
+.dash-plano-bar-andamento > .bar  { -fx-background-color: #3A7AD0; }
+.dash-plano-bar-concluida > .bar  { -fx-background-color: #2E8040; }
+
+/* Sessões recentes */
+.dash-sessao-data    { -fx-font-size: 11px; -fx-text-fill: #6070A0; }
+.dash-sessao-duracao { -fx-font-size: 11px; -fx-text-fill: #5090D0; -fx-font-weight: bold; }

@@ -1,13 +1,13 @@
 # StudyApp — Especificações do Sistema
 
-**Versão:** 0.5
+**Versão:** 0.6
 **Tecnologias:** JavaFX 21, SQLite, Maven, Java 17+
 
 ---
 
 ## 1. Visão Geral
 
-Aplicação desktop de estudos pessoal com sistema de arquivos hierárquico, editor Markdown, visualizador de PDFs, gerenciamento de tarefas, agenda, bloco de notas, temporizador Pomodoro, calculadora e plano de estudos. Acesso protegido por login individual — cada usuário vê apenas seus próprios dados.
+Aplicação desktop de estudos pessoal com dashboard inicial, sistema de arquivos hierárquico, editor Markdown, visualizador de PDFs, gerenciamento de tarefas, agenda, bloco de notas, temporizador Pomodoro, calculadora e plano de estudos. Acesso protegido por login individual — cada usuário vê apenas seus próprios dados.
 
 ---
 
@@ -502,7 +502,14 @@ Estilos próprios do módulo em ambos os temas:
 - Operações: +, −, ×, ÷, %, inversão de sinal.
 - Histórico da sessão atual.
 
-### 7.6 Plano de Estudos
+### 7.6 Dashboard
+- Tela inicial exibida ao fazer login. Saudação contextual (bom dia/tarde/noite) com o primeiro nome do usuário.
+- 4 cards de resumo: sessões Pomodoro de hoje, tarefas urgentes, eventos do dia, progresso do plano de estudos.
+- Seções com dados dos outros módulos: tarefas urgentes, eventos de hoje, progresso por disciplina, sessões recentes de foco.
+- Botões de atalho navigam para o módulo correspondente ou abrem o Pomodoro pré-selecionando o próximo assunto pendente.
+- Todos os dados carregados em background; botão "↻ Atualizar" recarrega manualmente.
+
+### 7.7 Plano de Estudos
 - Hierarquia Disciplina → Assunto com progresso de sessões Pomodoro.
 - Sidebar com cards de disciplina (barra de progresso % assuntos concluídos, total de tempo de foco).
 - Painel direito com cards de assunto: chips de status/dificuldade, data limite com alertas visuais, barra de sessões (realizadas/mínimas), botão "▶ Estudar agora".

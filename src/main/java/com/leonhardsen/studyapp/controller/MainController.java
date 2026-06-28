@@ -71,6 +71,7 @@ public class MainController {
     @FXML private Button btnConfiguracoes;
 
     // ── Navegação ─────────────────────────────────────────────────────────────
+    @FXML private Button     btnNavDashboard;
     @FXML private Button     btnNavArquivos;
     @FXML private Button     btnNavTarefas;
     @FXML private Button     btnNavAgenda;
@@ -84,6 +85,7 @@ public class MainController {
     @FXML private BorderPane painelAgendaContainer;
     @FXML private BorderPane painelBlocoNotasContainer;
     @FXML private BorderPane painelCalculadoraContainer;
+    @FXML private BorderPane painelDashboardContainer;
     @FXML private BorderPane painelPomodoroContainer;
     @FXML private BorderPane painelPlanoEstudosContainer;
 
@@ -127,6 +129,7 @@ public class MainController {
     private AgendaController     agendaController;
     private BlocoNotasController blocoNotasController;
     private CalculadoraController calculadoraController;
+    private DashboardController     dashboardController;
     private PomodoroController      pomodoroController;
     private PlanoEstudosController  planoEstudosController;
 
@@ -174,6 +177,7 @@ public class MainController {
         configurarAutoSave();
         carregarArvore();
         verificarPrazos();
+        handleNavDashboard();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -269,11 +273,14 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelDashboardContainer.setVisible(false);
+        painelDashboardContainer.setManaged(false);
         painelPlanoEstudosContainer.setVisible(false);
         painelPlanoEstudosContainer.setManaged(false);
         painelArquivosContainer.setVisible(true);
         painelArquivosContainer.setManaged(true);
         btnNavArquivos.getStyleClass().add("btn-nav-ativo");
+        btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
@@ -309,11 +316,14 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelDashboardContainer.setVisible(false);
+        painelDashboardContainer.setManaged(false);
         painelPlanoEstudosContainer.setVisible(false);
         painelPlanoEstudosContainer.setManaged(false);
         painelTarefasContainer.setVisible(true);
         painelTarefasContainer.setManaged(true);
         btnNavTarefas.getStyleClass().add("btn-nav-ativo");
+        btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
@@ -349,11 +359,14 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelDashboardContainer.setVisible(false);
+        painelDashboardContainer.setManaged(false);
         painelPlanoEstudosContainer.setVisible(false);
         painelPlanoEstudosContainer.setManaged(false);
         painelAgendaContainer.setVisible(true);
         painelAgendaContainer.setManaged(true);
         btnNavAgenda.getStyleClass().add("btn-nav-ativo");
+        btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
         btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
@@ -387,11 +400,14 @@ public class MainController {
         painelCalculadoraContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelDashboardContainer.setVisible(false);
+        painelDashboardContainer.setManaged(false);
         painelPlanoEstudosContainer.setVisible(false);
         painelPlanoEstudosContainer.setManaged(false);
         painelBlocoNotasContainer.setVisible(true);
         painelBlocoNotasContainer.setManaged(true);
         btnNavBlocoNotas.getStyleClass().add("btn-nav-ativo");
+        btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
         btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
@@ -425,11 +441,14 @@ public class MainController {
         painelBlocoNotasContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
+        painelDashboardContainer.setVisible(false);
+        painelDashboardContainer.setManaged(false);
         painelPlanoEstudosContainer.setVisible(false);
         painelPlanoEstudosContainer.setManaged(false);
         painelCalculadoraContainer.setVisible(true);
         painelCalculadoraContainer.setManaged(true);
         btnNavCalculadora.getStyleClass().add("btn-nav-ativo");
+        btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
         btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
@@ -464,16 +483,65 @@ public class MainController {
         painelBlocoNotasContainer.setManaged(false);
         painelCalculadoraContainer.setVisible(false);
         painelCalculadoraContainer.setManaged(false);
+        painelDashboardContainer.setVisible(false);
+        painelDashboardContainer.setManaged(false);
         painelPlanoEstudosContainer.setVisible(false);
         painelPlanoEstudosContainer.setManaged(false);
         painelPomodoroContainer.setVisible(true);
         painelPomodoroContainer.setManaged(true);
         btnNavPomodoro.getStyleClass().add("btn-nav-ativo");
+        btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
         btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
         btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
         btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
+        btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
+    }
+
+    @FXML
+    private void handleNavDashboard() {
+        if (dashboardController == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                    StudyApplication.class.getResource("dashboard-view.fxml"));
+                javafx.scene.Node view = loader.load();
+                dashboardController = loader.getController();
+                dashboardController.setOnVerTarefas(this::handleNavTarefas);
+                dashboardController.setOnVerAgenda(this::handleNavAgenda);
+                dashboardController.setOnVerPlanoEstudos(this::handleNavPlanoEstudos);
+                dashboardController.setOnEstudarAssunto(this::navegarParaPomodoroComAssunto);
+                painelDashboardContainer.setCenter(view);
+            } catch (Exception ex) {
+                mostrarErro("Erro ao carregar Dashboard: " + ex.getMessage());
+                return;
+            }
+        } else {
+            dashboardController.atualizarView();
+        }
+        painelArquivosContainer.setVisible(false);
+        painelArquivosContainer.setManaged(false);
+        painelTarefasContainer.setVisible(false);
+        painelTarefasContainer.setManaged(false);
+        painelAgendaContainer.setVisible(false);
+        painelAgendaContainer.setManaged(false);
+        painelBlocoNotasContainer.setVisible(false);
+        painelBlocoNotasContainer.setManaged(false);
+        painelCalculadoraContainer.setVisible(false);
+        painelCalculadoraContainer.setManaged(false);
+        painelPomodoroContainer.setVisible(false);
+        painelPomodoroContainer.setManaged(false);
+        painelPlanoEstudosContainer.setVisible(false);
+        painelPlanoEstudosContainer.setManaged(false);
+        painelDashboardContainer.setVisible(true);
+        painelDashboardContainer.setManaged(true);
+        btnNavDashboard.getStyleClass().add("btn-nav-ativo");
+        btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
+        btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
+        btnNavAgenda.getStyleClass().remove("btn-nav-ativo");
+        btnNavBlocoNotas.getStyleClass().remove("btn-nav-ativo");
+        btnNavCalculadora.getStyleClass().remove("btn-nav-ativo");
+        btnNavPomodoro.getStyleClass().remove("btn-nav-ativo");
         btnNavPlanoEstudos.getStyleClass().remove("btn-nav-ativo");
     }
 
@@ -504,11 +572,14 @@ public class MainController {
         painelBlocoNotasContainer.setManaged(false);
         painelCalculadoraContainer.setVisible(false);
         painelCalculadoraContainer.setManaged(false);
+        painelDashboardContainer.setVisible(false);
+        painelDashboardContainer.setManaged(false);
         painelPomodoroContainer.setVisible(false);
         painelPomodoroContainer.setManaged(false);
         painelPlanoEstudosContainer.setVisible(true);
         painelPlanoEstudosContainer.setManaged(true);
         btnNavPlanoEstudos.getStyleClass().add("btn-nav-ativo");
+        btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavArquivos.getStyleClass().remove("btn-nav-ativo");
         btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
         btnNavAgenda.getStyleClass().remove("btn-nav-ativo");

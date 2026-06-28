@@ -6,6 +6,8 @@ import com.leonhardsen.studyapp.model.TipoSessao;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Objeto de acesso a dados (DAO) para a entidade {@link SessaoPomodoro}.
@@ -130,5 +132,46 @@ public class SessaoPomodoroDAO {
                 return rs.next() ? rs.getInt(1) : 0;
             }
         }
+    }
+
+    /**
+     * Retorna um resumo das últimas sessões de foco do usuário, com o nome do assunto e
+     * da disciplina vinculados (via JOIN). Cada elemento do resultado é um array de strings
+     * com os campos: {@code [duracao_segundos, concluido_em, assunto_nome, disciplina_nome]},
+     * onde {@code assunto_nome} e {@code disciplina_nome} podem ser {@code null}.
+     *
+     * @param usuarioId identificador do usuário
+     * @param limite    número máximo de sessões a retornar
+     * @return lista de arrays de strings, ordenada da mais recente para a mais antiga
+     * @throws SQLException se ocorrer erro na consulta
+     */
+    public List<String[]> buscarResumoRecentes(int usuarioId, int limite) throws SQLException {
+        String sql = """
+            SELECT sp.duracao_segundos, sp.concluido_em,
+                   a.nome  AS assunto_nome,
+                   d.nome  AS disciplina_nome
+            FROM sessao_pomodoro sp
+            LEFT JOIN assunto    a ON sp.assunto_id    = a.id
+            LEFT JOIN disciplina d ON a.disciplina_id  = d.id
+            WHERE sp.usuario_id = ? AND sp.tipo = 'FOCO'
+            ORDER BY sp.concluido_em DESC
+            LIMIT ?
+            """;
+        List<String[]> lista = new ArrayList<>();
+        try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
+            ps.setInt(1, usuarioId);
+            ps.setInt(2, limite);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(new String[]{
+                        String.valueOf(rs.getInt("duracao_segundos")),
+                        rs.getString("concluido_em"),
+                        rs.getString("assunto_nome"),
+                        rs.getString("disciplina_nome")
+                    });
+                }
+            }
+        }
+        return lista;
     }
 }
