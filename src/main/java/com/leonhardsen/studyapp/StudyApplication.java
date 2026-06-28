@@ -55,7 +55,7 @@ public class StudyApplication extends Application {
         stagePrincipal.setScene(cena);
         stagePrincipal.setMaximized(false);
         stagePrincipal.setWidth(480);
-        stagePrincipal.setHeight(480);
+        stagePrincipal.setHeight(600);
         stagePrincipal.centerOnScreen();
         stagePrincipal.show();
     }

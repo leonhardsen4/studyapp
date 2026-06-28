@@ -242,6 +242,17 @@ public class DatabaseManager {
                 )
                 """);
         }
+        migrarTabelas();
+    }
+
+    /**
+     * Aplica migrações incrementais de esquema para bancos existentes.
+     * Cada migração é idempotente: ignora erros de "column already exists".
+     */
+    private void migrarTabelas() {
+        try (Statement stmt = conexao.createStatement()) {
+            stmt.execute("ALTER TABLE disciplina ADD COLUMN arquivado INTEGER NOT NULL DEFAULT 0");
+        } catch (SQLException ignored) { /* coluna já existe — ignorar */ }
     }
 
     /**

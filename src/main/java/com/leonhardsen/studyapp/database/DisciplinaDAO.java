@@ -77,9 +77,16 @@ public class DisciplinaDAO {
      * @return lista de disciplinas (pode estar vazia)
      * @throws SQLException se ocorrer erro na consulta
      */
+    /**
+     * Retorna todas as disciplinas ativas (não arquivadas) de um usuário, ordenadas pelo nome.
+     *
+     * @param usuarioId identificador do usuário
+     * @return lista de disciplinas ativas (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<Disciplina> buscarPorUsuario(int usuarioId) throws SQLException {
         List<Disciplina> lista = new ArrayList<>();
-        String sql = "SELECT id, usuario_id, nome, criado_em FROM disciplina WHERE usuario_id = ? ORDER BY nome COLLATE NOCASE";
+        String sql = "SELECT id, usuario_id, nome, criado_em, arquivado FROM disciplina WHERE usuario_id = ? AND arquivado = 0 ORDER BY nome COLLATE NOCASE";
         try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
             ps.setInt(1, usuarioId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -87,6 +94,51 @@ public class DisciplinaDAO {
             }
         }
         return lista;
+    }
+
+    /**
+     * Retorna todas as disciplinas arquivadas de um usuário, ordenadas pelo nome.
+     *
+     * @param usuarioId identificador do usuário
+     * @return lista de disciplinas arquivadas (pode estar vazia)
+     * @throws SQLException se ocorrer erro na consulta
+     */
+    public List<Disciplina> buscarArquivadas(int usuarioId) throws SQLException {
+        List<Disciplina> lista = new ArrayList<>();
+        String sql = "SELECT id, usuario_id, nome, criado_em, arquivado FROM disciplina WHERE usuario_id = ? AND arquivado = 1 ORDER BY nome COLLATE NOCASE";
+        try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
+            ps.setInt(1, usuarioId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) lista.add(mapear(rs));
+            }
+        }
+        return lista;
+    }
+
+    /**
+     * Arquiva a disciplina, ocultando-a da visualização principal.
+     *
+     * @param id identificador da disciplina
+     * @throws SQLException se ocorrer erro na operação
+     */
+    public void arquivar(int id) throws SQLException {
+        try (PreparedStatement ps = db.getConexao().prepareStatement("UPDATE disciplina SET arquivado = 1 WHERE id = ?")) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Desarquiva a disciplina, tornando-a visível na visualização principal novamente.
+     *
+     * @param id identificador da disciplina
+     * @throws SQLException se ocorrer erro na operação
+     */
+    public void desarquivar(int id) throws SQLException {
+        try (PreparedStatement ps = db.getConexao().prepareStatement("UPDATE disciplina SET arquivado = 0 WHERE id = ?")) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
     }
 
     /**
@@ -113,6 +165,7 @@ public class DisciplinaDAO {
         d.setNome(rs.getString("nome"));
         String criado = rs.getString("criado_em");
         if (criado != null) d.setCriadoEm(LocalDateTime.parse(criado.replace(" ", "T")));
+        d.setArquivado(rs.getInt("arquivado") == 1);
         return d;
     }
 }

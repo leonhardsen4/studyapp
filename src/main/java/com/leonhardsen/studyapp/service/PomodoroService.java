@@ -50,6 +50,37 @@ public class PomodoroService {
      * @throws SQLException             se ocorrer erro de persistência
      * @throws IllegalArgumentException se o novo nome for vazio
      */
+    /**
+     * Retorna todas as disciplinas arquivadas do usuário, ordenadas pelo nome.
+     *
+     * @param usuarioId identificador do usuário
+     * @return lista de disciplinas arquivadas (pode estar vazia)
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public List<Disciplina> buscarDisciplinasArquivadas(int usuarioId) throws SQLException {
+        return disciplinaDAO.buscarArquivadas(usuarioId);
+    }
+
+    /**
+     * Arquiva a disciplina, ocultando-a da visualização principal do Plano de Estudos.
+     *
+     * @param id identificador da disciplina
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public void arquivarDisciplina(int id) throws SQLException {
+        disciplinaDAO.arquivar(id);
+    }
+
+    /**
+     * Desarquiva a disciplina, tornando-a visível novamente no Plano de Estudos.
+     *
+     * @param id identificador da disciplina
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public void desarquivarDisciplina(int id) throws SQLException {
+        disciplinaDAO.desarquivar(id);
+    }
+
     public void renomearDisciplina(int id, String novoNome) throws SQLException {
         novoNome = novoNome.trim();
         if (novoNome.isBlank()) throw new IllegalArgumentException("O nome da disciplina é obrigatório.");
@@ -300,5 +331,29 @@ public class PomodoroService {
      */
     public List<String[]> buscarResumoSessoesRecentes(int usuarioId, int limite) throws SQLException {
         return sessaoDAO.buscarResumoRecentes(usuarioId, limite);
+    }
+
+    /**
+     * Retorna o histórico completo de sessões de foco de um assunto.
+     * Cada elemento é {@code [concluido_em, duracao_segundos]}.
+     *
+     * @param assuntoId identificador do assunto
+     * @return lista de arrays com data e duração, da mais recente para a mais antiga
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public List<String[]> buscarHistoricoPorAssunto(int assuntoId) throws SQLException {
+        return sessaoDAO.buscarHistoricoPorAssunto(assuntoId);
+    }
+
+    /**
+     * Retorna o histórico completo de sessões de foco de todos os assuntos de uma disciplina.
+     * Cada elemento é {@code [concluido_em, duracao_segundos, assunto_nome]}.
+     *
+     * @param disciplinaId identificador da disciplina
+     * @return lista de arrays com data, duração e nome do assunto, da mais recente para a mais antiga
+     * @throws SQLException se ocorrer erro de persistência
+     */
+    public List<String[]> buscarHistoricoPorDisciplina(int disciplinaId) throws SQLException {
+        return sessaoDAO.buscarHistoricoPorDisciplina(disciplinaId);
     }
 }

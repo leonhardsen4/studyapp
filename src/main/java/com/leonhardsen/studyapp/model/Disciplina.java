@@ -12,6 +12,7 @@ public class Disciplina {
     private int usuarioId;
     private String nome;
     private LocalDateTime criadoEm;
+    private boolean arquivado;
 
     /** Construtor padrão sem argumentos. */
     public Disciplina() {}
@@ -46,6 +47,11 @@ public class Disciplina {
     public LocalDateTime getCriadoEm() { return criadoEm; }
     /** Define a data/hora de criação da disciplina. */
     public void setCriadoEm(LocalDateTime criadoEm) { this.criadoEm = criadoEm; }
+
+    /** Retorna {@code true} se a disciplina está arquivada (oculta da visualização principal). */
+    public boolean isArquivado() { return arquivado; }
+    /** Define se a disciplina está arquivada. */
+    public void setArquivado(boolean arquivado) { this.arquivado = arquivado; }
 
     @Override
     public String toString() { return nome; }

@@ -145,6 +145,58 @@ public class SessaoPomodoroDAO {
      * @return lista de arrays de strings, ordenada da mais recente para a mais antiga
      * @throws SQLException se ocorrer erro na consulta
      */
+    /**
+     * Retorna o histórico completo de sessões de foco de um assunto, da mais recente para a mais antiga.
+     * Cada elemento é um array {@code [concluido_em, duracao_segundos]}.
+     *
+     * @param assuntoId identificador do assunto
+     * @return lista de arrays com data/hora e duração de cada sessão
+     * @throws SQLException se ocorrer erro na consulta
+     */
+    public List<String[]> buscarHistoricoPorAssunto(int assuntoId) throws SQLException {
+        String sql = """
+            SELECT concluido_em, duracao_segundos
+            FROM sessao_pomodoro
+            WHERE assunto_id = ? AND tipo = 'FOCO'
+            ORDER BY concluido_em DESC
+            """;
+        List<String[]> lista = new ArrayList<>();
+        try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
+            ps.setInt(1, assuntoId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) lista.add(new String[]{ rs.getString("concluido_em"), String.valueOf(rs.getInt("duracao_segundos")) });
+            }
+        }
+        return lista;
+    }
+
+    /**
+     * Retorna o histórico completo de sessões de foco de todos os assuntos de uma disciplina,
+     * da mais recente para a mais antiga.
+     * Cada elemento é um array {@code [concluido_em, duracao_segundos, assunto_nome]}.
+     *
+     * @param disciplinaId identificador da disciplina
+     * @return lista de arrays com data/hora, duração e nome do assunto de cada sessão
+     * @throws SQLException se ocorrer erro na consulta
+     */
+    public List<String[]> buscarHistoricoPorDisciplina(int disciplinaId) throws SQLException {
+        String sql = """
+            SELECT sp.concluido_em, sp.duracao_segundos, a.nome AS assunto_nome
+            FROM sessao_pomodoro sp
+            JOIN assunto a ON sp.assunto_id = a.id
+            WHERE a.disciplina_id = ? AND sp.tipo = 'FOCO'
+            ORDER BY sp.concluido_em DESC
+            """;
+        List<String[]> lista = new ArrayList<>();
+        try (PreparedStatement ps = db.getConexao().prepareStatement(sql)) {
+            ps.setInt(1, disciplinaId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) lista.add(new String[]{ rs.getString("concluido_em"), String.valueOf(rs.getInt("duracao_segundos")), rs.getString("assunto_nome") });
+            }
+        }
+        return lista;
+    }
+
     public List<String[]> buscarResumoRecentes(int usuarioId, int limite) throws SQLException {
         String sql = """
             SELECT sp.duracao_segundos, sp.concluido_em,
