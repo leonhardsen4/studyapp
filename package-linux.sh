@@ -137,9 +137,10 @@ jpackage \
     --input target/app-libs \
     --main-jar "$APP_JAR" \
     --main-class "$MAIN_CLASS" \
-    --add-modules javafx.controls,javafx.fxml,javafx.web,javafx.media,javafx.graphics,javafx.base \
+    --add-modules javafx.controls,javafx.fxml,javafx.web,javafx.media,javafx.graphics,javafx.base,java.sql,java.desktop,java.security.sasl,java.logging,java.naming,jdk.crypto.ec \
     --java-options "-Dfile.encoding=UTF-8" \
     --java-options "-Djava.locale.providers=COMPAT,SPI" \
+    --java-options "--enable-native-access=javafx.graphics" \
     --dest target/dist \
     --icon "$ICON_PATH" \
     --verbose 2>&1 | grep -E "^\[|^Error|^Warning|Generating|Creating|Adding" || true
