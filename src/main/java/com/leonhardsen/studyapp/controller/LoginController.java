@@ -8,7 +8,6 @@ import com.leonhardsen.studyapp.util.HashUtil;
 import com.leonhardsen.studyapp.util.ThemeManager;
 import com.leonhardsen.studyapp.util.SessionManager;
 import com.leonhardsen.studyapp.util.SmtpConfigDialog;
-import com.leonhardsen.studyapp.util.ThemeManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -110,15 +109,13 @@ public class LoginController {
                     String hashTemp = HashUtil.gerarHash(senhaTemporal);
 
                     // Verifica existência sem revelar se o e-mail existe
-                    var usuarioDAO = new com.leonhardsen.studyapp.database.UsuarioDAO(
-                            com.leonhardsen.studyapp.database.DatabaseManager.getInstance());
-                    Usuario usuario = usuarioDAO.buscarPorEmail(email.trim().toLowerCase());
+                    Usuario usuario = usuarioService.buscarPorEmail(email.trim());
                     if (usuario != null) {
                         // Envia primeiro; só atualiza a senha se o envio não lançar exceção
                         EmailService.enviar(email.trim(), "StudyApp — Senha Temporária",
                                 "Sua senha temporária é: " + senhaTemporal +
                                         "\n\nAcesse o sistema e altere-a imediatamente em Configurações > Perfil.");
-                        usuarioDAO.atualizarSenha(usuario.getId(), hashTemp);
+                        usuarioService.redefinirSenha(usuario.getId(), hashTemp);
                     }
                     Platform.runLater(() -> {
                         Alert info = new Alert(Alert.AlertType.INFORMATION);

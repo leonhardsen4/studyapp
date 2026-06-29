@@ -150,6 +150,29 @@ public class UsuarioService {
     }
 
     /**
+     * Busca um usuário pelo endereço de e-mail (normalizado para minúsculas).
+     *
+     * @param email endereço de e-mail a pesquisar
+     * @return objeto {@link Usuario} encontrado, ou {@code null} se não existir
+     * @throws SQLException se ocorrer erro de acesso ao banco de dados
+     */
+    public Usuario buscarPorEmail(String email) throws SQLException {
+        return usuarioDAO.buscarPorEmail(email.trim().toLowerCase());
+    }
+
+    /**
+     * Redefine a senha de um usuário diretamente (sem confirmar a senha atual).
+     * Usado exclusivamente no fluxo de recuperação de senha por e-mail.
+     *
+     * @param usuarioId    identificador do usuário
+     * @param novoHashSenha novo hash BCrypt da senha temporária
+     * @throws SQLException se ocorrer erro de acesso ao banco de dados
+     */
+    public void redefinirSenha(int usuarioId, String novoHashSenha) throws SQLException {
+        usuarioDAO.atualizarSenha(usuarioId, novoHashSenha);
+    }
+
+    /**
      * Atualiza a preferência de tema visual do usuário no banco de dados.
      *
      * @param usuarioId identificador do usuário

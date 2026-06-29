@@ -3,6 +3,7 @@ package com.leonhardsen.studyapp.controller;
 import com.leonhardsen.studyapp.StudyApplication;
 import com.leonhardsen.studyapp.model.*;
 import com.leonhardsen.studyapp.service.PomodoroService;
+import com.leonhardsen.studyapp.util.FormatadorData;
 import com.leonhardsen.studyapp.util.SessionManager;
 import com.leonhardsen.studyapp.util.ThemeManager;
 import javafx.application.Platform;
@@ -120,9 +121,7 @@ public class PlanoEstudosController {
             timerController = loader.getController();
             timerController.setOnEncerrar(this::ocultarPainelTimer);
             timerController.setOnSessaoConcluida(this::carregarDados);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     /**
@@ -270,9 +269,7 @@ public class PlanoEstudosController {
                     recarregarListaDisciplinas();
                     if (disciplinaSelecionada != null) recarregarAssuntos();
                 });
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            } catch (Exception ignored) {}
         }).start();
     }
 
@@ -393,7 +390,7 @@ public class PlanoEstudosController {
         else if (pct > 0)
             progressBar.getStyleClass().add("plano-progress-andamento");
 
-        Label lblStats = new Label(concluidos + "/" + assuntos.size() + " assuntos  •  " + formatarTempo(segundos));
+        Label lblStats = new Label(concluidos + "/" + assuntos.size() + " assuntos  •  " + FormatadorData.formatarTempo(segundos));
         lblStats.getStyleClass().add("plano-disc-stats");
 
         card.getChildren().addAll(header, progressBar, lblStats);
@@ -467,7 +464,7 @@ public class PlanoEstudosController {
         lblNomeDisciplina.setText(disciplinaSelecionada.getNome()
                 + (disciplinaSelecionada.isArquivado() ? "  [Arquivada]" : ""));
         lblResumoDisc.setText(concluidos + "/" + todosAssuntos.size()
-                + " assuntos concluídos  •  " + formatarTempo(totalSeg) + " de estudo no total");
+                + " assuntos concluídos  •  " + FormatadorData.formatarTempo(totalSeg) + " de estudo no total");
 
         headerAssuntos.setVisible(true);  headerAssuntos.setManaged(true);
         painelVazio.setVisible(false);    painelVazio.setManaged(false);
@@ -562,7 +559,7 @@ public class PlanoEstudosController {
 
         Label lblSessoes = new Label(
                 a.getSessoesRealizadas() + "/" + a.getSessoesMinimas()
-                + " 🍅 (" + pctInt + "%)  •  " + formatarTempo(duracaoSeg));
+                + " 🍅 (" + pctInt + "%)  •  " + FormatadorData.formatarTempo(duracaoSeg));
         lblSessoes.getStyleClass().add("plano-assunto-sessoes");
         row3.getChildren().addAll(bar, lblSessoes);
 
@@ -961,7 +958,7 @@ public class PlanoEstudosController {
         } else {
             int totalSeg = sessoes.stream().mapToInt(s -> Integer.parseInt(s[1])).sum();
             Label lblStats = new Label(
-                    sessoes.size() + " sessão(ões)  •  " + formatarTempo(totalSeg) + " de foco no total");
+                    sessoes.size() + " sessão(ões)  •  " + FormatadorData.formatarTempo(totalSeg) + " de foco no total");
             lblStats.getStyleClass().add("plano-hist-total");
             corpo.getChildren().add(lblStats);
             corpo.getChildren().add(new Separator());
@@ -990,7 +987,7 @@ public class PlanoEstudosController {
                 lblData.getStyleClass().add("plano-hist-data");
                 lblData.setMinWidth(145);
 
-                Label lblDuracao = new Label(formatarTempo(Integer.parseInt(s[1])));
+                Label lblDuracao = new Label(FormatadorData.formatarTempo(Integer.parseInt(s[1])));
                 lblDuracao.getStyleClass().add("plano-hist-duracao");
                 lblDuracao.setMinWidth(65);
 
@@ -1020,20 +1017,6 @@ public class PlanoEstudosController {
     // ─────────────────────────────────────────────────────────────────────────
     // UTILITÁRIOS
     // ─────────────────────────────────────────────────────────────────────────
-
-    /**
-     * Formata uma duração em segundos para o formato legível "Xh Ymin" ou "Y min".
-     *
-     * @param segundos duração em segundos
-     * @return string formatada
-     */
-    private String formatarTempo(int segundos) {
-        if (segundos == 0) return "0 min";
-        int h = segundos / 3600;
-        int m = (segundos % 3600) / 60;
-        if (h > 0) return h + "h " + m + "min";
-        return m + " min";
-    }
 
     private String getStatusLabel(TipoStatusAssunto status) {
         return switch (status) {

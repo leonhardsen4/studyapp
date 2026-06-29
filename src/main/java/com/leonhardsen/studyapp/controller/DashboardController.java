@@ -571,7 +571,7 @@ public class DashboardController {
             else if (pct > 0) bar.getStyleClass().add("dash-plano-bar-andamento");
 
             Label lblStats = new Label(
-                concluidos + "/" + assuntos.size() + " assuntos  •  " + formatarTempo(duracaoSeg));
+                concluidos + "/" + assuntos.size() + " assuntos  •  " + FormatadorData.formatarTempo(duracaoSeg));
             lblStats.getStyleClass().add("dash-plano-stats");
 
             infoBox.getChildren().addAll(lblNome, bar, lblStats);
@@ -656,7 +656,7 @@ public class DashboardController {
             Label lblData = new Label(dataLabel);
             lblData.getStyleClass().add("dash-sessao-data");
 
-            Label lblDuracao = new Label(formatarTempo(duracaoSeg));
+            Label lblDuracao = new Label(FormatadorData.formatarTempo(duracaoSeg));
             lblDuracao.getStyleClass().add("dash-sessao-duracao");
 
             row.getChildren().addAll(lblIcone, lblDesc, lblData, lblDuracao);
@@ -704,17 +704,4 @@ public class DashboardController {
         conteudo.getChildren().add(lbl);
     }
 
-    /**
-     * Formata uma duração em segundos para "Xh Ymin" ou "Y min".
-     *
-     * @param segundos duração em segundos
-     * @return string formatada
-     */
-    private String formatarTempo(int segundos) {
-        int h = segundos / 3600;
-        int m = (segundos % 3600) / 60;
-        if (segundos == 0) return "0 min";
-        if (h > 0) return h + "h " + m + "min";
-        return m + " min";
-    }
 }

@@ -2,6 +2,8 @@ package com.leonhardsen.studyapp.controller;
 
 import com.leonhardsen.studyapp.model.*;
 import com.leonhardsen.studyapp.service.PomodoroService;
+import com.leonhardsen.studyapp.database.DatabaseManager;
+import com.leonhardsen.studyapp.util.FormatadorData;
 import com.leonhardsen.studyapp.util.SessionManager;
 import com.leonhardsen.studyapp.util.ThemeManager;
 import javafx.animation.KeyFrame;
@@ -72,7 +74,7 @@ public class PomodoroTimerController {
     private int minutosPausaLonga = 15;
 
     private static final String PREFS_PATH =
-            System.getProperty("user.home") + "/.studyapp/pomodoro.properties";
+            DatabaseManager.getDirApp() + "/pomodoro.properties";
 
     // ── Serviço e dados ───────────────────────────────────────────────────────
     private final PomodoroService service = new PomodoroService();
@@ -178,9 +180,7 @@ public class PomodoroTimerController {
                         atualizarEstatsHoje();
                         if (onSessaoConcluida != null) onSessaoConcluida.run();
                     });
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                } catch (Exception ignored) {}
             }).start();
 
             sessoesNoCiclo++;
@@ -341,9 +341,7 @@ public class PomodoroTimerController {
                                 lblEstudando.setText("Selecione um assunto");
                                 if (onSessaoConcluida != null) onSessaoConcluida.run();
                             });
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                        } catch (Exception ignored) {}
                     }).start();
                 }
             });
@@ -406,22 +404,13 @@ public class PomodoroTimerController {
             try {
                 int sessoes  = service.contarSessoesHoje(uid);
                 int segundos = service.somarDuracaoHoje(uid);
-                String tempoStr = formatarTempo(segundos);
+                String tempoStr = FormatadorData.formatarTempo(segundos);
                 Platform.runLater(() -> {
                     lblSessoesHoje.setText(sessoes + " sessão" + (sessoes != 1 ? "ões" : ""));
                     lblTempoHoje.setText(tempoStr);
                 });
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            } catch (Exception ignored) {}
         }).start();
-    }
-
-    private String formatarTempo(int segundos) {
-        int h = segundos / 3600;
-        int m = (segundos % 3600) / 60;
-        if (h > 0) return h + "h " + m + "min";
-        return m + " min";
     }
 
     // ─────────────────────────────────────────────────────────────────────────

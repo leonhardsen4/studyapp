@@ -70,7 +70,7 @@ Aplicação desktop de produtividade pessoal voltada para estudantes, desenvolvi
 | Apache PDFBox    | 3.0.3    | Visualização de PDFs                 |
 | exp4j            | 0.4.8    | Avaliador de expressões matemáticas  |
 | Jakarta Mail     | 2.0.1    | Envio de e-mail via SMTP             |
-| JUnit Jupiter    | 5.12.1   | Testes unitários (69 testes)         |
+| JUnit Jupiter    | 5.12.1   | Testes unitários (99 testes)         |
 
 ---
 

@@ -71,13 +71,6 @@ public class DisciplinaDAO {
     }
 
     /**
-     * Retorna todas as disciplinas de um usuário, ordenadas pelo nome.
-     *
-     * @param usuarioId identificador do usuário
-     * @return lista de disciplinas (pode estar vazia)
-     * @throws SQLException se ocorrer erro na consulta
-     */
-    /**
      * Retorna todas as disciplinas ativas (não arquivadas) de um usuário, ordenadas pelo nome.
      *
      * @param usuarioId identificador do usuário

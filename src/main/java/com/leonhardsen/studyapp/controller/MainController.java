@@ -2,7 +2,6 @@ package com.leonhardsen.studyapp.controller;
 
 import com.leonhardsen.studyapp.StudyApplication;
 import com.leonhardsen.studyapp.database.DatabaseManager;
-import com.leonhardsen.studyapp.database.UsuarioDAO;
 import com.leonhardsen.studyapp.model.Assunto;
 import com.leonhardsen.studyapp.model.Evento;
 import com.leonhardsen.studyapp.model.ItemArvore;
@@ -10,9 +9,10 @@ import com.leonhardsen.studyapp.model.Nota;
 import com.leonhardsen.studyapp.model.PdfDocumento;
 import com.leonhardsen.studyapp.model.Tarefa;
 import com.leonhardsen.studyapp.model.TipoItem;
-import com.leonhardsen.studyapp.service.EventoService;
 import com.leonhardsen.studyapp.service.ArquivoService;
+import com.leonhardsen.studyapp.service.EventoService;
 import com.leonhardsen.studyapp.service.NotaService;
+import com.leonhardsen.studyapp.service.TarefaService;
 import com.leonhardsen.studyapp.service.UsuarioService;
 import com.leonhardsen.studyapp.util.FormatadorData;
 import com.leonhardsen.studyapp.util.SessionManager;
@@ -119,6 +119,8 @@ public class MainController {
     private final ArquivoService arquivoService = new ArquivoService();
     private final NotaService notaService = new NotaService();
     private final UsuarioService usuarioService = new UsuarioService();
+    private final TarefaService tarefaService = new TarefaService();
+    private final EventoService eventoService = new EventoService();
 
     // ── Estado interno ────────────────────────────────────────────────────────
     private Timeline relogio;
@@ -303,6 +305,7 @@ public class MainController {
         painelPlanoEstudosContainer.setManaged(false);
         painelArquivosContainer.setVisible(true);
         painelArquivosContainer.setManaged(true);
+        Platform.runLater(() -> splitPane.setDividerPositions(0.30));
         btnNavArquivos.getStyleClass().add("btn-nav-ativo");
         btnNavDashboard.getStyleClass().remove("btn-nav-ativo");
         btnNavTarefas.getStyleClass().remove("btn-nav-ativo");
@@ -576,9 +579,8 @@ public class MainController {
         if (usuario == null) return;
         new Thread(() -> {
             try {
-                var tarefaService = new com.leonhardsen.studyapp.service.TarefaService();
                 List<Tarefa> alertas = tarefaService.buscarTarefasComAlerta(usuario.getId());
-                List<Evento> eventos = new EventoService().buscarEventosHoje(usuario.getId());
+                List<Evento> eventos = eventoService.buscarEventosHoje(usuario.getId());
                 Platform.runLater(() -> {
                     tarefasAlerta = alertas;
                     eventosHoje   = eventos;

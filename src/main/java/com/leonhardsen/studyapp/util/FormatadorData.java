@@ -83,6 +83,20 @@ public class FormatadorData {
     }
 
     /**
+     * Formata uma duração em segundos para exibição legível (ex.: "1h 30min" ou "45 min").
+     *
+     * @param segundos duração em segundos
+     * @return string formatada; retorna "0 min" para zero segundos
+     */
+    public static String formatarTempo(int segundos) {
+        if (segundos == 0) return "0 min";
+        int h = segundos / 3600;
+        int m = (segundos % 3600) / 60;
+        if (h > 0) return h + "h " + m + "min";
+        return m + " min";
+    }
+
+    /**
      * Formata um mês/ano para exibição no cabeçalho da agenda (ex.: "Junho 2026").
      *
      * @param mesAno objeto {@link YearMonth} a ser formatado

@@ -222,9 +222,7 @@ public class ThemeManager {
             }
             urlCssEscala = new File(path).toURI().toURL().toExternalForm();
             cenaAtiva.getStylesheets().add(urlCssEscala);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     private void excluirArquivoEscala(String url) {
@@ -284,9 +282,7 @@ public class ThemeManager {
             try (var out = new FileOutputStream(PROPS_PATH)) {
                 props.store(out, null);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     private void carregarEscala() {
@@ -300,9 +296,7 @@ public class ThemeManager {
                 double v = Double.parseDouble(props.getProperty("escala_fonte", "1.0"));
                 escalaFonte = Math.max(ESCALA_MIN, Math.min(ESCALA_MAX, v));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     /**

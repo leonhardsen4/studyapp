@@ -135,17 +135,6 @@ public class SessaoPomodoroDAO {
     }
 
     /**
-     * Retorna um resumo das últimas sessões de foco do usuário, com o nome do assunto e
-     * da disciplina vinculados (via JOIN). Cada elemento do resultado é um array de strings
-     * com os campos: {@code [duracao_segundos, concluido_em, assunto_nome, disciplina_nome]},
-     * onde {@code assunto_nome} e {@code disciplina_nome} podem ser {@code null}.
-     *
-     * @param usuarioId identificador do usuário
-     * @param limite    número máximo de sessões a retornar
-     * @return lista de arrays de strings, ordenada da mais recente para a mais antiga
-     * @throws SQLException se ocorrer erro na consulta
-     */
-    /**
      * Retorna o histórico completo de sessões de foco de um assunto, da mais recente para a mais antiga.
      * Cada elemento é um array {@code [concluido_em, duracao_segundos]}.
      *
@@ -197,6 +186,17 @@ public class SessaoPomodoroDAO {
         return lista;
     }
 
+    /**
+     * Retorna um resumo das últimas sessões de foco do usuário, com o nome do assunto e
+     * da disciplina vinculados (via JOIN). Cada elemento do resultado é um array de strings
+     * com os campos: {@code [duracao_segundos, concluido_em, assunto_nome, disciplina_nome]},
+     * onde {@code assunto_nome} e {@code disciplina_nome} podem ser {@code null}.
+     *
+     * @param usuarioId identificador do usuário
+     * @param limite    número máximo de sessões a retornar
+     * @return lista de arrays de strings, ordenada da mais recente para a mais antiga
+     * @throws SQLException se ocorrer erro na consulta
+     */
     public List<String[]> buscarResumoRecentes(int usuarioId, int limite) throws SQLException {
         String sql = """
             SELECT sp.duracao_segundos, sp.concluido_em,

@@ -43,14 +43,6 @@ public class PomodoroService {
     }
 
     /**
-     * Renomeia uma disciplina existente.
-     *
-     * @param id       identificador da disciplina
-     * @param novoNome novo nome da disciplina (não pode ser vazio)
-     * @throws SQLException             se ocorrer erro de persistência
-     * @throws IllegalArgumentException se o novo nome for vazio
-     */
-    /**
      * Retorna todas as disciplinas arquivadas do usuário, ordenadas pelo nome.
      *
      * @param usuarioId identificador do usuário
@@ -81,6 +73,14 @@ public class PomodoroService {
         disciplinaDAO.desarquivar(id);
     }
 
+    /**
+     * Renomeia uma disciplina existente.
+     *
+     * @param id       identificador da disciplina
+     * @param novoNome novo nome da disciplina (não pode ser vazio)
+     * @throws SQLException             se ocorrer erro de persistência
+     * @throws IllegalArgumentException se o novo nome for vazio
+     */
     public void renomearDisciplina(int id, String novoNome) throws SQLException {
         novoNome = novoNome.trim();
         if (novoNome.isBlank()) throw new IllegalArgumentException("O nome da disciplina é obrigatório.");

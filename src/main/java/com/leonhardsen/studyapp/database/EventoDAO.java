@@ -50,8 +50,9 @@ public class EventoDAO {
             ps.setString(5, e.getHoraInicio() != null ? e.getHoraInicio().format(FMT_HORA) : null);
             ps.setString(6, e.getHoraFim()    != null ? e.getHoraFim().format(FMT_HORA)    : null);
             ps.executeUpdate();
-            ResultSet rs = ps.getGeneratedKeys();
-            return rs.next() ? rs.getInt(1) : -1;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                return rs.next() ? rs.getInt(1) : -1;
+            }
         }
     }
 
