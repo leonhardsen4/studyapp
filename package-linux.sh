@@ -165,8 +165,8 @@ DESKTOP_DIR="$(xdg-user-dir DESKTOP 2>/dev/null || echo "$HOME/Desktop")"
 DESKTOP_FILE="${DESKTOP_DIR}/${APP_NAME}.desktop"
 LAUNCHER="$DIST_DIR/bin/${APP_NAME}"
 
-cat > "$DESKTOP_FILE" <<DESKTOP
-[Desktop Entry]
+# Conteúdo do .desktop (gerado uma vez, usado em dois locais)
+DESKTOP_CONTENT="[Desktop Entry]
 Version=1.0
 Type=Application
 Name=StudyApp
@@ -176,13 +176,21 @@ Icon=${DIST_DIR}/studyapp-icon.png
 Terminal=false
 Categories=Education;Office;
 StartupWMClass=StudyApp
-StartupNotify=true
-DESKTOP
+StartupNotify=true"
 
+# ── Instala no banco XDG (obrigatório para GNOME 3.36+ confiar no arquivo) ──
+XDG_APPS="$HOME/.local/share/applications"
+mkdir -p "$XDG_APPS"
+printf '%s\n' "$DESKTOP_CONTENT" > "${XDG_APPS}/${APP_NAME}.desktop"
+chmod +x "${XDG_APPS}/${APP_NAME}.desktop"
+update-desktop-database "$XDG_APPS" 2>/dev/null || true
+
+# ── Cria atalho no Desktop (ativa confiança via metadado e permissão) ──
+printf '%s\n' "$DESKTOP_CONTENT" > "$DESKTOP_FILE"
 chmod +x "$DESKTOP_FILE"
 chmod +x "$LAUNCHER"
 
-# Algumas distribuições Linux exigem marcar o .desktop como confiável
+# GNOME ≥ 3.28 exige metadado "trusted" no arquivo do Desktop
 gio set "$DESKTOP_FILE" metadata::trusted true 2>/dev/null || true
 
 echo ""
